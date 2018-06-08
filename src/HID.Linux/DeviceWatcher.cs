@@ -14,19 +14,19 @@ using Monitor = Dandy.Linux.Udev.Monitor;
 
 namespace Dandy.Devices.HID.Linux
 {
-    public class DeviceWatcher : ObservableBase<Device>, IDeviceWatcher
+    public class DeviceWatcher : ObservableBase<IDevice>, IDeviceWatcher
     {
-        readonly Subject<Device> subject;
+        readonly Subject<IDevice> subject;
         readonly Context udev;
         Monitor monitor;
 
         public DeviceWatcher()
         {
-            subject = new Subject<Device>();
+            subject = new Subject<IDevice>();
             udev = new Context();
         }
 
-        protected override IDisposable SubscribeCore(IObserver<Device> observer)
+        protected override IDisposable SubscribeCore(IObserver<IDevice> observer)
         {
             return subject.Subscribe(observer);
         }
@@ -50,7 +50,7 @@ namespace Dandy.Devices.HID.Linux
                         if (token.IsCancellationRequested) {
                             break;
                         }
-                        subject.OnNext(new Device(device.SysPath));
+                        subject.OnNext(new Device(device));
                     }
                     var pollfds = new Pollfd[] {
                         new Pollfd { fd = monitor.Fd, events = PollEvents.POLLIN }
@@ -74,7 +74,7 @@ namespace Dandy.Devices.HID.Linux
                             break;
                         }
                         var device = monitor.TryReceiveDevice();
-                        subject.OnNext(new Device(device.SysPath));
+                        subject.OnNext(new Device(device));
                     }
                     subject.OnCompleted();
                 }

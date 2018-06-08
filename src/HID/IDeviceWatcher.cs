@@ -3,7 +3,7 @@ using System.Reactive.Subjects;
 
 namespace Dandy.Devices.HID
 {
-    public interface IDeviceWatcher : IConnectableObservable<Device>, IDisposable
+    public interface IDeviceWatcher : IConnectableObservable<IDevice>, IDisposable
     {
     }
 }

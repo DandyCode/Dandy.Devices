@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive;
 
 namespace Dandy.Devices.HID.Example.WatchHID
@@ -8,8 +8,8 @@ namespace Dandy.Devices.HID.Example.WatchHID
         static void Main(string[] args)
         {
             using (var watcher = DeviceWatcher.ForPlatform()) {
-                watcher.Subscribe(Observer.Create<Device>(
-                    x => Console.WriteLine("Added {0}", x.Id),
+                watcher.Subscribe(Observer.Create<IDevice>(
+                    x => Console.WriteLine("Added {0}", x.DisplayName),
                     x => Console.WriteLine("Error: {0}", x.Message),
                     () => Console.WriteLine("Complete")
                 ));

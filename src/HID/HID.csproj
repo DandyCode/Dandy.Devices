@@ -21,8 +21,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Dandy.Devices</RootNamespace>
-    <AssemblyName>$(RootNamespace).$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Dandy.Devices.HID</RootNamespace>
+    <AssemblyName>Dandy.Devices.HID</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -8,17 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
+using Windows.Storage;
 
 namespace Dandy.Devices.HID.UWP
 {
-    public sealed class DeviceWatcher : ObservableBase<Device>, IDeviceWatcher
+    public sealed class DeviceWatcher : ObservableBase<IDevice>, IDeviceWatcher
     {
-        readonly Subject<Device> subject;
+        readonly Subject<IDevice> subject;
         readonly Windows.Devices.Enumeration.DeviceWatcher watcher;
 
         public DeviceWatcher()
         {
-            subject = new Subject<Device>();
+            subject = new Subject<IDevice>();
             const string selector = "System.Devices.InterfaceClassGuid:= \"{4D1E55B2-F16F-11CF-88CB-001111000030}\" AND System.Devices.InterfaceEnabled:= System.StructuredQueryType.Boolean#True";
             watcher = DeviceInformation.CreateWatcher(selector);
             watcher.Added += Watcher_Added;
@@ -27,9 +28,15 @@ namespace Dandy.Devices.HID.UWP
             watcher.Stopped += Watcher_Stopped;
         }
         
-        private void Watcher_Added(Windows.Devices.Enumeration.DeviceWatcher sender, DeviceInformation args)
+        private async void Watcher_Added(Windows.Devices.Enumeration.DeviceWatcher sender, DeviceInformation args)
         {
-            subject.OnNext(new Device(args.Id));
+            // FIXME: async void - need to log error or something
+            var device = await HidDevice.FromIdAsync(args.Id, FileAccessMode.ReadWrite);
+            if (device == null) {
+                // we probably don't have permission to use it
+                return;
+            }
+            subject.OnNext(new Device(args, device));
         }
 
         private void Watcher_Removed(Windows.Devices.Enumeration.DeviceWatcher sender, DeviceInformationUpdate args)
@@ -57,7 +64,7 @@ namespace Dandy.Devices.HID.UWP
             watcher.Added -= Watcher_Added;
         }
 
-        protected override IDisposable SubscribeCore(IObserver<Device> observer)
+        protected override IDisposable SubscribeCore(IObserver<IDevice> observer)
         {
             return subject.Subscribe(observer);
         }

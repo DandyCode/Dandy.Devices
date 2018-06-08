@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2" IgnorableNamespaces="uap mp uap5 iot2 desktop4">
+  <Identity Name="0aac7354-d7e2-4581-84d3-b13b321d021e" Publisher="CN=david" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="0aac7354-d7e2-4581-84d3-b13b321d021e" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Properties>
+    <DisplayName>WatchHID.UWP</DisplayName>
+    <PublisherDisplayName>DandyCode</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="WatchHID.UWP.Program" desktop4:SupportsMultipleInstances="true" desktop4:Subsystem="console" iot2:SupportsMultipleInstances="true" iot2:Subsystem="console">
+      <uap:VisualElements DisplayName="WatchHID.UWP" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="WatchHID.UWP" BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png">
+        </uap:DefaultTile>
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias" Executable="WatchHID.UWP.exe" EntryPoint="WatchHID.UWP.Program">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console" iot2:Subsystem="console">
+            <uap5:ExecutionAlias Alias="WatchHID.UWP.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <DeviceCapability Name="humaninterfacedevice">
+      <Device Id="any">
+        <Function Type="usage:0001 *"/> <!-- generic desktop controls -->
+        <Function Type="usage:0002 *"/> <!-- simulation controls -->
+        <Function Type="usage:0003 *"/> <!-- VR controls -->
+        <Function Type="usage:0004 *"/> <!-- sports controls -->
+        <Function Type="usage:0005 *"/> <!-- game controls -->
+        <Function Type="usage:0006 *"/> <!-- generic device controls -->
+        <!--<Function Type="usage:0007 *"/> --><!-- keyboard/keypad, not allowed by UWP -->
+        <Function Type="usage:0008 *"/> <!-- LEDs -->
+        <Function Type="usage:0009 *"/> <!-- button -->
+        <Function Type="usage:000A *"/> <!-- ordinal -->
+        <Function Type="usage:000B *"/> <!-- telephony -->
+        <!--<Function Type="usage:000C *"/> --><!-- consumer, not allowed by UWP -->
+        <!--<Function Type="usage:000D *"/> --><!-- digitizer, not allowed by UWP -->
+        <Function Type="usage:000F *"/> <!-- PID page -->
+        <Function Type="usage:0010 *"/> <!-- unicode -->
+        <Function Type="usage:0014 *"/> <!-- alphanumeric display -->
+        <Function Type="usage:0040 *"/> <!-- medical instruments -->
+      </Device>
+    </DeviceCapability>
+  </Capabilities>
+</Package>

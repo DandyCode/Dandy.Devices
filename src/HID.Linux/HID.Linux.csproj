@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>a1</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HID\HID.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b4" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+    <RootNamespace>Dandy.Devices</RootNamespace>
+    <AssemblyName>$(RootNamespace).$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+</Project>

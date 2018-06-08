@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>a1</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Dandy .NET Library for HID Devices</Title>
+    <Authors>dlech</Authors>
+    <Description>
+      This is a cross-platform library for using Human Interface Devices (HIDs).
+      It uses the observiable pattern (System.Reactive) for monitoring hotplug events.
+    </Description>
+    <Copyright>2018 David Lechner &lt;david@lechnology.com&gt;</Copyright>
+    <PackageLicenseUrl>https://github.com/DandyCode/Devices/LICENSE.md</PackageLicenseUrl>
+    <PackateProjectUrl>https://github.com/DandyCode/Devices</PackateProjectUrl>
+    <IncludeSource>true</IncludeSource>
+    <RepositoryUrl>https://github.com/DandyCode/Devices.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Dandy.Devices</RootNamespace>
+    <AssemblyName>$(RootNamespace).$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>

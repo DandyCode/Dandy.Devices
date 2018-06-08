@@ -38,17 +38,29 @@
         <Function Type="usage:0004 *"/> <!-- sports controls -->
         <Function Type="usage:0005 *"/> <!-- game controls -->
         <Function Type="usage:0006 *"/> <!-- generic device controls -->
-        <!--<Function Type="usage:0007 *"/> --><!-- keyboard/keypad, not allowed by UWP -->
+        <!--<Function Type="usage:0007 *"/> --><!-- keyboard/keypad, not allowed here -->
         <Function Type="usage:0008 *"/> <!-- LEDs -->
         <Function Type="usage:0009 *"/> <!-- button -->
         <Function Type="usage:000A *"/> <!-- ordinal -->
         <Function Type="usage:000B *"/> <!-- telephony -->
-        <!--<Function Type="usage:000C *"/> --><!-- consumer, not allowed by UWP -->
-        <!--<Function Type="usage:000D *"/> --><!-- digitizer, not allowed by UWP -->
+        <!--<Function Type="usage:000C *"/> --><!-- consumer, not allowed here -->
+        <!--<Function Type="usage:000D *"/> --><!-- digitizer, not allowed here -->
         <Function Type="usage:000F *"/> <!-- PID page -->
         <Function Type="usage:0010 *"/> <!-- unicode -->
         <Function Type="usage:0014 *"/> <!-- alphanumeric display -->
-        <Function Type="usage:0040 *"/> <!-- medical instruments -->
+        <Function Type="usage:0080 *"/> <!-- monitor page -->
+        <Function Type="usage:0081 *"/> <!-- monitor page -->
+        <Function Type="usage:0082 *"/> <!-- monitor page -->
+        <Function Type="usage:0083 *"/> <!-- monitor page -->
+        <Function Type="usage:0084 *"/> <!-- power page -->
+        <Function Type="usage:0085 *"/> <!-- power page -->
+        <Function Type="usage:0086 *"/> <!-- power page -->
+        <Function Type="usage:0087 *"/> <!-- power page -->
+        <Function Type="usage:008C *"/> <!-- bar code scanner page -->
+        <Function Type="usage:008D *"/> <!-- scale page -->
+        <Function Type="usage:008E *"/> <!-- magnetic stripe reading devices -->
+        <Function Type="usage:0090 *"/> <!-- camera control page -->
+        <Function Type="usage:0091 *"/> <!-- arcade page -->
       </Device>
     </DeviceCapability>
   </Capabilities>

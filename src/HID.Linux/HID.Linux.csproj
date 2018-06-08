@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b4" />
+    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b1" />
   </ItemGroup>
 
   <PropertyGroup>

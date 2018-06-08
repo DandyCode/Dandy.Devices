@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -53,7 +53,7 @@ namespace Dandy.Devices.HID.Linux
                         subject.OnNext(new Device(device.SysPath));
                     }
                     var pollfds = new Pollfd[] {
-                        new Pollfd { fd = monitor.FileDescriptor, events = PollEvents.POLLIN }
+                        new Pollfd { fd = monitor.Fd, events = PollEvents.POLLIN }
                     };
                     while (!token.IsCancellationRequested) {
                         // FIXME: it would be nice if we didn't wake up every 100ms

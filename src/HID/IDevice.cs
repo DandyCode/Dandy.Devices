@@ -36,9 +36,10 @@ namespace Dandy.Devices.HID
         /// </summary>
         ushort ProductId { get;  }
 
-        /// <summary>
+        // TODO: not an easy way to get this on Linux, so skipping for now
+        /* /// <summary>
         /// Gets the version of the HID device
         /// </summary>
-        ushort Version { get;  }
+        ushort Version { get;  } */
     }
 }

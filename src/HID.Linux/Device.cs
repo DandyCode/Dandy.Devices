@@ -1,31 +1,34 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Dandy.Devices.HID;
+using Dandy.Devices.HID.Report;
 
-namespace Dandy.Devices
+namespace Dandy.Devices.HID.Linux
 {
     sealed class Device : IDevice
     {
-        private readonly Linux.Udev.Device device;
+        private readonly ReportCollection application;
+        private readonly Hidraw hidraw;
 
-        public Device(Linux.Udev.Device device)
+        public Device(ReportCollection application, Hidraw hidraw)
         {
-            this.device = device ?? throw new ArgumentNullException(nameof(device));
+            this.application = application ?? throw new ArgumentNullException(nameof(application));
+            this.hidraw = hidraw ?? throw new ArgumentNullException(nameof(hidraw));
+            
         }
 
-        public string Id => device.SysPath;
+        public string Id => hidraw.PhysicalLocation;
 
-        public string DisplayName => device["HID_NAME"];
+        public string DisplayName => hidraw.Name;
 
-        public ushort UsagePage => throw new NotImplementedException();
+        public ushort UsagePage => (ushort)application.UsagePage;
 
-        public ushort UsageId => throw new NotImplementedException();
+        public ushort UsageId => application.UsageId;
 
-        public ushort VendorId => throw new NotImplementedException();
+        public ushort VendorId => hidraw.VendorId;
 
-        public ushort ProductId => throw new NotImplementedException();
-
-        public ushort Version => throw new NotImplementedException();
+        public ushort ProductId => hidraw.ProductId;
     }
 }

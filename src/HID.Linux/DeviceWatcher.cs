@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -30,6 +32,23 @@ namespace Dandy.Devices.HID.Linux
         {
             return subject.Subscribe(observer);
         }
+
+        /// <summary>
+        /// Tries to get an HID device for the udev device.
+        /// </summary>
+        /// <param name="hidrawUdev">The udev device for an hidraw node</param>
+        /// <returns>The HID device or <c>null</c> if we don't have permission to use the hidraw device.</return>
+        static IEnumerable<Device> TryGetHidDevices(Dandy.Linux.Udev.Device hidrawUdev)
+        {
+            try {
+                var hidUdev = hidrawUdev.TryGetAncestor("hid");
+                var hidraw = new Hidraw(hidrawUdev.DevNode);
+                return hidraw.GetReports().Select(x => new Device(x, hidraw));
+            }
+            catch (UnauthorizedAccessException) {
+                return null;
+            }
+        }
         
         public IDisposable Connect()
         {
@@ -37,20 +56,26 @@ namespace Dandy.Devices.HID.Linux
                 throw new InvalidOperationException("already connected");
             }
             monitor = new Monitor(udev);
-            monitor.AddMatchSubsystem("hid");
+            monitor.AddMatchSubsystem("hidraw");
             monitor.EnableReceiving();
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
             Task.Run(() => {
                 try {
                     var enumerator = new Enumerator(udev);
-                    enumerator.AddMatchSubsystem("hid");
+                    enumerator.AddMatchSubsystem("hidraw");
                     enumerator.ScanDevices();
                     foreach (var device in enumerator) {
                         if (token.IsCancellationRequested) {
                             break;
                         }
-                        subject.OnNext(new Device(device));
+                        var hids = TryGetHidDevices(device);
+                        if (hids == null) {
+                            continue;
+                        }
+                        foreach (var hid in hids) {
+                            subject.OnNext(hid);
+                        }
                     }
                     var pollfds = new Pollfd[] {
                         new Pollfd { fd = monitor.Fd, events = PollEvents.POLLIN }
@@ -60,6 +85,13 @@ namespace Dandy.Devices.HID.Linux
                         // not sure how to interrupt a system call though
                         // pinvoke pthread_kill() maybe?
                         var ret = Syscall.poll(pollfds, 100);
+                        if (ret == -1) {
+                            var err = Stdlib.GetLastError();
+                            if (err == Errno.EINTR) {
+                                continue;
+                            }
+                            UnixMarshal.ThrowExceptionForError(err);
+                        }
                         if (token.IsCancellationRequested) {
                             break;
                         }
@@ -67,14 +99,19 @@ namespace Dandy.Devices.HID.Linux
                             // timed out
                             continue;
                         }
-                        UnixMarshal.ThrowExceptionForLastErrorIf(ret);
                         if (pollfds[0].revents.HasFlag(PollEvents.POLLNVAL)) {
                             // monitor file descriptor is closed, monitor must
                             // have been disposed, so complete gracefully
                             break;
                         }
                         var device = monitor.TryReceiveDevice();
-                        subject.OnNext(new Device(device));
+                        var hids = TryGetHidDevices(device);
+                        if (hids == null) {
+                            continue;
+                        }
+                        foreach (var hid in hids) {
+                            subject.OnNext(hid);
+                        }
                     }
                     subject.OnCompleted();
                 }

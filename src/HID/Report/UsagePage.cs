@@ -1,0 +1,40 @@
+namespace Dandy.Devices.HID.Report
+{
+    public enum UsagePage : ushort
+    {
+        Undefined = 0x00,
+        GenericDesktopControls = 0x01,
+        SimulationControls = 0x02,
+        VRControls = 0x03,
+        SportControls = 0x04,
+        GameControls = 0x05,
+        GenericDeviceControls = 0x06,
+        KeyboardKeypad = 0x07,
+        LEDs = 0x08,
+        Button = 0x09,
+        Ordinal = 0x0A,
+        Telephony = 0x0B,
+        Consumer = 0x0C,
+        Digitizer = 0x0D,
+        PID = 0x0F,
+        Unicode = 0x10,
+        AlphanumericDisplay = 0x14,
+        MedicalInstruments = 0x40,
+        Monitor0 = 0x80,
+        Monitor1 = 0x81,
+        Monitor2 = 0x82,
+        Monitor3 = 0x83,
+        Power0 = 0x84,
+        Power1 = 0x85,
+        Power2 = 0x86,
+        Power3 = 0x87,
+        Scale = 0x8D,
+        MagneticStripeReading = 0x8E,
+        ReservedPointOfSale = 0x8F,
+        CameraControl = 0x90,
+        Arcade = 0x91,
+        Vendor0 = 0xFF00,
+        // TODO: add more vendor entries?
+        Vendor255 = 0xFFFF,
+    }
+}

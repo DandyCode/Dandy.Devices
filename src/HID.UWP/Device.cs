@@ -30,8 +30,6 @@ namespace Dandy.Devices.HID.UWP
         public ushort VendorId => device.VendorId;
 
         public ushort ProductId => device.ProductId;
-
-        public ushort Version => device.Version;
     }
 }
 

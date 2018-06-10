@@ -29,13 +29,13 @@ namespace Dandy.Devices.HID.Linux
             public ushort product;
         }
 
-        static readonly UIntPtr HIDIOCGRDESCSIZE = (UIntPtr)_IO.R('H', 0x01, typeof(int));
-        static readonly UIntPtr HIDIOCGRDESC = (UIntPtr)_IO.R('H', 0x02, typeof(hidraw_report_descriptor));
-        static readonly UIntPtr HIDIOCGRAWINFO = (UIntPtr)_IO.R('H', 0x03, typeof(hidraw_devinfo));
-        static UIntPtr HIDIOCGRAWNAME(int len) => (UIntPtr)_IO.C(_IO.C_READ, 'H', 0x04, len);
-        static UIntPtr HIDIOCGRAWPHYS(int len) => (UIntPtr)_IO.C(_IO.C_READ, 'H', 0x05, len);
-        static UIntPtr HIDIOCSFEATURE(int len) => (UIntPtr)_IO.C(_IO.C_WRITE | _IO.C_READ, 'H', 0x06, len);
-        static UIntPtr HIDIOCGFEATURE(int len) => (UIntPtr)_IO.C(_IO.C_WRITE | _IO.C_READ, 'H', 0x07, len);
+        static readonly int HIDIOCGRDESCSIZE = _IO.R('H', 0x01, typeof(int));
+        static readonly int HIDIOCGRDESC = _IO.R('H', 0x02, typeof(hidraw_report_descriptor));
+        static readonly int HIDIOCGRAWINFO = _IO.R('H', 0x03, typeof(hidraw_devinfo));
+        static int HIDIOCGRAWNAME(int len) => _IO.C(_IO.C_READ, 'H', 0x04, len);
+        static int HIDIOCGRAWPHYS(int len) => _IO.C(_IO.C_READ, 'H', 0x05, len);
+        static int HIDIOCSFEATURE(int len) => _IO.C(_IO.C_WRITE | _IO.C_READ, 'H', 0x06, len);
+        static int HIDIOCGFEATURE(int len) => _IO.C(_IO.C_WRITE | _IO.C_READ, 'H', 0x07, len);
 
         private int fd = -1;
 

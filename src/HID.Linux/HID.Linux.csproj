@@ -10,9 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dandy.Linux.Input" Version="1.0.0-b1local1" />
-    <PackageReference Include="Dandy.Linux.Ioctl" Version="1.0.0-b1local3" />
-    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b1" />
+    <PackageReference Include="Dandy.Linux" Version="1.0.0-b1" />
+    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b2" />
   </ItemGroup>
 
   <PropertyGroup>

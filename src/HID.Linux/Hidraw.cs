@@ -22,12 +22,14 @@ namespace Dandy.Devices.HID.Linux
             public fixed byte value[HID_MAX_DESCRIPTOR_SIZE];
         }
 
+#pragma warning disable CS0649
         struct hidraw_devinfo
         {
             public uint bustype;
             public ushort vendor;
             public ushort product;
         }
+#pragma warning restore CS0649
 
         static readonly int HIDIOCGRDESCSIZE = _IO.R('H', 0x01, typeof(int));
         static readonly int HIDIOCGRDESC = _IO.R('H', 0x02, typeof(hidraw_report_descriptor));

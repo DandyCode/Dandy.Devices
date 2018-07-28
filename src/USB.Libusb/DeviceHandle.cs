@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Dandy.Devices.USB.Libusb
 {
@@ -595,6 +596,32 @@ namespace Dandy.Devices.USB.Libusb
                     throw new ErrorException(ret);
                 }
                 return transferred;
+            }
+            finally {
+                gcHandle.Free();
+            }
+        }
+
+        [DllImport("usb-1.0")]
+        static extern int libusb_get_string_descriptor_ascii(IntPtr dev_handle, byte desc_index, IntPtr data, int length);
+
+        /// <summary>
+        /// Retrieve a string descriptor in C style ASCII.
+        /// </summary>
+        /// <remarks>
+        /// Uses the first language supported by the device.
+        /// </remarks>
+        public string GetStringDescriptor(byte descIndex)
+        {
+            var data = new byte[256];
+            var gcHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            try {
+                var data_ = gcHandle.AddrOfPinnedObject();
+                var ret = libusb_get_string_descriptor_ascii(Handle, descIndex, data_, data.Length);
+                if (ret < 0) {
+                    throw new ErrorException(ret);
+                }
+                return Encoding.ASCII.GetString(data, 0, ret);
             }
             finally {
                 gcHandle.Free();

@@ -194,7 +194,7 @@ namespace Dandy.Devices.USB.Libusb
         internal Device(IntPtr dev)
         {
             this.dev = libusb_ref_device(dev);
-            lazyDescriptor = new Lazy<DeviceDescriptor>(() => new DeviceDescriptor(this));
+            lazyDeviceDescriptor = new Lazy<DeviceDescriptor>(() => new DeviceDescriptor(this));
         }
 
         /// <inheritdoc/>
@@ -235,7 +235,7 @@ namespace Dandy.Devices.USB.Libusb
         /// <summary>
         /// Gets the USB device descriptor for a given device.
         /// </summary>
-        public DeviceDescriptor Descriptor => lazyDescriptor.Value;
-        readonly Lazy<DeviceDescriptor> lazyDescriptor;
+        public DeviceDescriptor DeviceDescriptor => lazyDeviceDescriptor.Value;
+        readonly Lazy<DeviceDescriptor> lazyDeviceDescriptor;
     }
 }

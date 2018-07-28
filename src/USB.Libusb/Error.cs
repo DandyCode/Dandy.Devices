@@ -89,7 +89,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public Error Error { get; }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern IntPtr libusb_strerror(Error error);
 
         static string StrError(Error error)

@@ -41,7 +41,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public ushort ProductId => descriptor.idProduct; // FIXME: need to swap bytes on big-endian systems
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_get_device_descriptor(IntPtr dev, out Struct desc);
 
         internal DeviceDescriptor(Device dev)

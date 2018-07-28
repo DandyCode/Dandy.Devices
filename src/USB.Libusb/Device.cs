@@ -30,7 +30,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public IntPtr Handle => dev == IntPtr.Zero ? throw new ObjectDisposedException(null) : dev;
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern byte libusb_get_bus_number(IntPtr dev);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public byte BusNumber => libusb_get_bus_number(Handle);
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern byte libusb_get_port_number(IntPtr dev);
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </value>
         public byte PortNumber => libusb_get_port_number(Handle);
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_get_port_numbers(IntPtr dev, IntPtr port_numbers, int port_numbers_len);
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Dandy.Devices.USB.Libusb
             }
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern IntPtr libusb_get_parent(IntPtr dev);
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Dandy.Devices.USB.Libusb
             }
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern byte libusb_get_device_address(IntPtr dev);
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public byte Address => libusb_get_device_address(Handle);
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_get_device_speed(IntPtr dev);
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Dandy.Devices.USB.Libusb
         /// </summary>
         public Speed Speed => (Speed)libusb_get_device_speed(Handle);
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_get_max_packet_size(IntPtr dev, byte endpoint);
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Dandy.Devices.USB.Libusb
             return ret;
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_get_max_iso_packet_size(IntPtr dev, byte endpoint);
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Dandy.Devices.USB.Libusb
             return ret;
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern IntPtr libusb_ref_device(IntPtr dev);
 
         internal Device(IntPtr dev)
@@ -203,7 +203,7 @@ namespace Dandy.Devices.USB.Libusb
             Dispose(false);
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern void libusb_unref_device(IntPtr dev);
 
         void Dispose(bool disposing)

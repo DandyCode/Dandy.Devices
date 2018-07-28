@@ -19,7 +19,7 @@ namespace Dandy.Devices.USB.Libusb
 
         public IntPtr Handle => context == IntPtr.Zero ? throw new ObjectDisposedException(null) : context;
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern int libusb_init(out IntPtr context);
 
         Context()
@@ -35,7 +35,7 @@ namespace Dandy.Devices.USB.Libusb
             Dispose(false);
         }
 
-        [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("usb-1.0")]
         static extern void libusb_exit(IntPtr context);
 
         void Dispose(bool disposing)

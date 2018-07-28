@@ -20,11 +20,11 @@ namespace Dandy.Devices.USB.Libusb
         public IntPtr Handle => context == IntPtr.Zero ? throw new ObjectDisposedException(null) : context;
 
         [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
-        static extern int libusb_init(ref IntPtr context);
+        static extern int libusb_init(out IntPtr context);
 
         Context()
         {
-            var ret = libusb_init(ref context);
+            var ret = libusb_init(out context);
             if (ret < 0) {
                 throw new ErrorException(ret);
             }

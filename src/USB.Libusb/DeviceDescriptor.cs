@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace Dandy.Devices.USB.Libusb
 {
+    /// <summary>
+    /// Class representing the standard USB device descriptor.
+    /// </summary>
     public sealed class DeviceDescriptor
     {
         Device device;
@@ -28,9 +31,15 @@ namespace Dandy.Devices.USB.Libusb
             #pragma warning restore CS0649
         }
 
-        public ushort VendorId => descriptor.idVendor;
+        /// <summary>
+        /// USB-IF vendor ID.
+        /// </summary>
+        public ushort VendorId => descriptor.idVendor; // FIXME: need to swap bytes on big-endian systems
 
-        public ushort ProductId => descriptor.idProduct;
+        /// <summary>
+        /// USB-IF product ID.
+        /// </summary>
+        public ushort ProductId => descriptor.idProduct; // FIXME: need to swap bytes on big-endian systems
 
         [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
         static extern int libusb_get_device_descriptor(IntPtr dev, out Struct desc);

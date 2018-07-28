@@ -424,6 +424,38 @@ namespace Dandy.Devices.USB.Libusb
         [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
         static extern int libusb_control_transfer(IntPtr dev_handle, byte bmRequestType, byte bRequest, ushort wValue, ushort wIndex, IntPtr data, ushort wLength, uint timeout);
 
+        /// <summary>
+        /// Performs a USB control transfer.
+        /// </summary>
+        /// <remarks>
+        /// The direction of the transfer is inferred from the <paramref name="bmRequestType"/>
+        /// field of the setup packet.
+        /// </remarks>
+        /// <param name="bmRequestType">
+        /// the request type field for the setup packet
+        /// </param>
+        /// <param name="bRequest">
+        /// the request field for the setup packet
+        /// </param>
+        /// <param name="wValue">
+        /// the value field for the setup packet
+        /// </param>
+        /// <param name="wIndex">
+        /// the index field for the setup packet
+        /// </param>
+        /// <param name="data">
+        /// a suitably-sized data buffer for either input or output (depending
+        /// on direction bits within <paramref name="bmRequestType"/>)
+        /// </param>
+        /// <param name="wLength">
+        /// the length field for the setup packet. The data buffer should be at
+        /// least this size.
+        /// </param>
+        /// <param name="timeout">
+        /// timeout (in millseconds) that this function should wait before
+        /// giving up due to no response being received. For an unlimited
+        /// timeout, use value 0.
+        /// </param>
         public void ControlTransfer(byte bmRequestType, byte bRequest, ushort wValue, ushort wIndex, byte[] data, ushort wLength, uint timeout = 0)
         {
             if (data == null) {
@@ -450,6 +482,43 @@ namespace Dandy.Devices.USB.Libusb
         [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
         static extern int libusb_bulk_transfer(IntPtr dev_handle, byte endpoint, IntPtr data, int length, out int transferred, uint timeout);
 
+        /// <summary>
+        /// Performs a USB bulk transfer.
+        /// </summary>
+        /// <remarks>
+        /// The direction of the transfer is inferred from the direction bits
+        /// of the endpoint address.
+        ///
+        /// For bulk reads, the length field indicates the maximum length of
+        /// data you are expecting to receive. If less data arrives than
+        /// expected, this function will return that data, so be sure to check
+        /// the transferred output parameter.
+        ///
+        /// You should also check the transferred parameter for bulk writes.
+        /// Not all of the data may have been written.
+        ///
+        /// Also check transferred when dealing with a timeout error code.
+        /// libusb may have to split your transfer into a number of chunks to
+        /// satisfy underlying O/S requirements, meaning that the timeout may
+        /// expire after the first few chunks have completed. libusb is careful
+        /// not to lose any data that may have been transferred; do not assume
+        /// that timeout conditions indicate a complete lack of I/O.
+        /// </remarks>
+        /// <param name="endpoint">
+        /// the address of a valid endpoint to communicate with
+        /// </param>
+        /// <param name="data">
+        /// a suitably-sized data buffer for either input or output (depending
+        /// on <paramref name="endpoint"/>)
+        /// </param>
+        /// <param name="timeout">
+        /// timeout (in millseconds) that this function should wait before
+        /// giving up due to no response being received. For an unlimited
+        /// timeout, use value 0.
+        /// </param>
+        /// <returns>
+        /// the number of bytes actually transferred
+        /// </returns>
         public int BulkTransfer(byte endpoint, byte[] data, uint timeout = 0)
         {
             if (data == null) {
@@ -473,6 +542,45 @@ namespace Dandy.Devices.USB.Libusb
         [DllImport("usb-1.0", CallingConvention = CallingConvention.Cdecl)]
         static extern int libusb_interrupt_transfer(IntPtr dev_handle, byte endpoint, IntPtr data, int length, out int transferred, uint timeout);
 
+        /// <summary>
+        /// Performs a USB interrupt transfer.
+        /// </summary>
+        /// <remarks>
+        /// The direction of the transfer is inferred from the direction bits
+        /// of the endpoint address.
+        ///
+        /// For interrupt reads, the length field indicates the maximum length
+        /// of data you are expecting to receive. If less data arrives than
+        /// expected, this function will return that data, so be sure to check
+        /// the transferred output parameter.
+        ///
+        /// You should also check the transferred parameter for interrupt
+        /// writes. Not all of the data may have been written.
+        ///
+        /// Also check transferred when dealing with a timeout error code.
+        /// libusb may have to split your transfer into a number of chunks to
+        /// satisfy underlying O/S requirements, meaning that the timeout may
+        /// expire after the first few chunks have completed. libusb is careful
+        /// not to lose any data that may have been transferred; do not assume
+        /// that timeout conditions indicate a complete lack of I/O.
+        ///
+        /// The default endpoint bInterval value is used as the polling interval.
+        /// </remarks>
+        /// <param name="endpoint">
+        /// the address of a valid endpoint to communicate with
+        /// </param>
+        /// <param name="data">
+        /// a suitably-sized data buffer for either input or output (depending
+        /// on <paramref name="endpoint"/>)
+        /// </param>
+        /// <param name="timeout">
+        /// timeout (in millseconds) that this function should wait before
+        /// giving up due to no response being received. For an unlimited
+        /// timeout, use value 0.
+        /// </param>
+        /// <returns>
+        /// the number of bytes actually transferred
+        /// </returns>
         public int InterruptTransfer(byte endpoint, byte[] data, uint timeout = 0)
         {
             if (data == null) {

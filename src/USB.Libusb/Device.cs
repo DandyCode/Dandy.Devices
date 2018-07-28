@@ -232,8 +232,10 @@ namespace Dandy.Devices.USB.Libusb
             return new DeviceHandle(this);
         }
 
+        /// <summary>
+        /// Gets the USB device descriptor for a given device.
+        /// </summary>
         public DeviceDescriptor Descriptor => lazyDescriptor.Value;
         readonly Lazy<DeviceDescriptor> lazyDescriptor;
-
     }
 }

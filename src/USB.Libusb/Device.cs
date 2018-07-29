@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     /// <summary>
     /// Class representing a USB device detected on the system.

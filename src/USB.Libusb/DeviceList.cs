@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     sealed class DeviceList : IDisposable, IEnumerable<Device>
     {

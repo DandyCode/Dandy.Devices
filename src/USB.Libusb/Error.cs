@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     /// <summary>
     /// Error codes.

@@ -1,4 +1,4 @@
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     /// <summary>
     /// Indicates the speed at which the device is operating.

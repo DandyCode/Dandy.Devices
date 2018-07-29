@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     /// <summary>
     /// Class representing a handle on a USB device.

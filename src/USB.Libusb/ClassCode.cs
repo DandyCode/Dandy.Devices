@@ -1,4 +1,4 @@
-namespace Dandy.Devices.USB.Libusb
+namespace Dandy.Devices.Usb.Libusb
 {
     /// <summary>
     /// Device and/or Interface Class codes.

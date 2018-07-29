@@ -7,8 +7,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Dandy.Devices.USB.Libusb</RootNamespace>
-    <AssemblyName>Dandy.Devices.USB.Libusb</AssemblyName>
+    <RootNamespace>Dandy.Devices.Usb.Libusb</RootNamespace>
+    <AssemblyName>Dandy.Devices.Usb.Libusb</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 

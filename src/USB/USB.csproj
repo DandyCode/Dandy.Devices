@@ -1,7 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Dandy.Devices.Usb</RootNamespace>
+    <AssemblyName>Dandy.Devices.Usb</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>DandyCode</Company>
+    <Authors>dlech</Authors>
+    <Description>A dandy .NET library for USB devices.</Description>
+    <Copyright>2018 David Lechner</Copyright>
+    <PackageProjectUrl>https://github.com/DandyCode/Dandy.Devices</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/DandyCode/Dandy.Devices/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/DandyCode/Dandy.Devices</RepositoryUrl>
+    <Version>1.0.0-a5</Version>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Dandy.Devices.Usb.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="4.0.0" />
+  </ItemGroup>
 
 </Project>

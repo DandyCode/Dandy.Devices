@@ -8,39 +8,36 @@ using Windows.Devices.SerialCommunication;
 
 namespace Dandy.Devices.Serial.Uwp
 {
-    public sealed class DeviceInfo : IDeviceInfo
+    /// <summary>
+    /// Wrapper around Windows.Devices.Enumeration.DeviceInfo.
+    /// </summary>
+    public sealed class DeviceInfo : Serial.DeviceInfo
     {
-        const string PortNameKey = "System.DeviceInterface.Serial.PortName";
-        const string UsbVendorIdKey = "System.DeviceInterface.Serial.UsbVendorId";
-        const string UsbProductIdKey = "System.DeviceInterface.Serial.UsbProductId";
+        internal const string PortNameKey = "System.DeviceInterface.Serial.PortName";
+        internal const string UsbVendorIdKey = "System.DeviceInterface.Serial.UsbVendorId";
+        internal const string UsbProductIdKey = "System.DeviceInterface.Serial.UsbProductId";
 
         private readonly DeviceInformation info;
 
         /// <inheritdoc/>
-        public string DisplayName => info.Name;
+        public override string DisplayName => info.Name;
 
         /// <inheritdoc/>
-        public string PortName => (string)info.Properties[PortNameKey];
+        public override string PortName => (string)info.Properties[PortNameKey];
 
         /// <inheritdoc/>
-        public ushort UsbVendorId => (ushort)info.Properties[UsbVendorIdKey];
+        public override ushort UsbVendorId => (ushort)info.Properties[UsbVendorIdKey];
 
         /// <inheritdoc/>
-        public ushort UsbProductId => (ushort)info.Properties[UsbProductIdKey];
+        public override ushort UsbProductId => (ushort)info.Properties[UsbProductIdKey];
 
-        public static async Task<IEnumerable<IDeviceInfo>> FindAllAsync()
-        {
-            var aqs = SerialDevice.GetDeviceSelector();
-            var devices = await DeviceInformation.FindAllAsync(aqs, new[] { PortNameKey, UsbVendorIdKey, UsbProductIdKey });
-            return devices.Select(d => new DeviceInfo(d));
-        }
-
-        DeviceInfo(DeviceInformation info)
+        internal DeviceInfo(DeviceInformation info)
         {
             this.info = info ?? throw new ArgumentNullException(nameof(info));
         }
 
-        public async Task<IDevice> OpenAsync()
+        /// <inheritdoc/>
+        public override async Task<Serial.Device> OpenAsync()
         {
             var d = await SerialDevice.FromIdAsync(info.Id);
             if (d == null) {
@@ -49,7 +46,8 @@ namespace Dandy.Devices.Serial.Uwp
             return new Device(d);
         }
 
-        public void Dispose()
+        /// <inheritdoc/>
+        public override void Dispose()
         {
         }
     }

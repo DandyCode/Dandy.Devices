@@ -10,7 +10,8 @@ namespace Dandy.Devices.Serial.Uwp.Tests
         [TestMethod]
         public void TestFactoryGetAllAsync()
         {
-            var x = Factory.FindAllAsync().Result;
+            var factory = new Factory();
+            var x = factory.FindAllAsync().Result;
             Assert.IsNotNull(x);
         }
     }

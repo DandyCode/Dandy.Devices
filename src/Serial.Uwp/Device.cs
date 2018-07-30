@@ -11,23 +11,30 @@ namespace Dandy.Devices.Serial.Uwp
     /// <summary>
     /// Wrapper around Windows.Devices.SerialCommunication.SerialDevice.
     /// </summary>
-    public sealed class Device : IDevice
+    public sealed class Device : Serial.Device
     {
         private readonly SerialDevice device;
 
         /// <inheritdoc/>
-        public Stream InputStream => new SerialInputStream(device);
+        public override uint BaudRate { get => device.BaudRate; set => device.BaudRate = value; }
 
         /// <inheritdoc/>
-        public Stream OutputStream => new SerialOutputStream(device);
+        public override Stream InputStream => lazyInputStream.Value;
+        readonly Lazy<Stream> lazyInputStream;
+
+        /// <inheritdoc/>
+        public override Stream OutputStream => lazyOutputStream.Value;
+        readonly Lazy<Stream> lazyOutputStream;
 
         internal Device(SerialDevice device)
         {
             this.device = device ?? throw new ArgumentNullException(nameof(device));
+            lazyInputStream = new Lazy<Stream>(() => new SerialInputStream(device));
+            lazyOutputStream = new Lazy<Stream>(() => new SerialOutputStream(device));
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             device.Dispose();
         }

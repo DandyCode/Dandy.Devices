@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="Device.cs" />
     <Compile Include="DeviceInfo.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Serial.Uwp.rd.xml" />
   </ItemGroup>

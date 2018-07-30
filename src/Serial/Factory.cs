@@ -9,18 +9,34 @@ namespace Dandy.Devices.Serial
     /// <summary>
     /// Factory for creating objects
     /// </summary>
-    public static class Factory
+    public abstract class Factory
     {
-        public static Task<IEnumerable<IDeviceInfo>> FindAllAsync()
+        /// <summary>
+        /// Gets a factory instance for the current OS platform via reflection.
+        /// </summary>
+        /// <returns>The factory</returns>
+        public static Factory GetFactoryForOSPlatform()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
                 var assembly = Assembly.Load("Dandy.Devices.Serial.Uwp");
-                var type = assembly.GetType("Dandy.Devices.Serial.Uwp.DeviceInfo");
-                var method = type.GetMethod("FindAllAsync", BindingFlags.Public | BindingFlags.Static);
-                return (Task<IEnumerable<IDeviceInfo>>)method.Invoke(null, null);
+                var type = assembly.GetType("Dandy.Devices.Serial.Uwp.Factory");
+                return (Factory)Activator.CreateInstance(type);
             }
 
             throw new NotSupportedException("The current platform is not supported");
         }
+
+        /// <summary>
+        /// Finds all currently attached serial communication devices.
+        /// </summary>
+        /// <returns>The list of devices.</returns>
+        public abstract Task<IEnumerable<DeviceInfo>> FindAllAsync();
+
+        /// <summary>
+        /// Finds all currently attached serial communication devices with the give USB
+        /// vendor ID and product ID.
+        /// </summary>
+        /// <returns>The list of devices.</returns>
+        public abstract Task<IEnumerable<DeviceInfo>> FindAllAsync(ushort vendorId, ushort productId);
     }
 }

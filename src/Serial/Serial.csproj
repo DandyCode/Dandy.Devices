@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Dandy.Devices.Serial</AssemblyName>
     <RootNamespace>Dandy.Devices.Serial</RootNamespace>
-    <Version>1.0.0-a1</Version>
+    <Version>1.0.0-a1.2</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 

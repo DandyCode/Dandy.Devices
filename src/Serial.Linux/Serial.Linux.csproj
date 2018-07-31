@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>a1.9</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Dandy.Devices.Serial.Linux</AssemblyName>
+    <RootNamespace>Dandy.Devices.Serial.Linux</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dandy.Linux.Udev" Version="1.0.0-b1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Serial\Serial.csproj" />
+  </ItemGroup>
+
+</Project>

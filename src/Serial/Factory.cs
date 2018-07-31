@@ -23,6 +23,12 @@ namespace Dandy.Devices.Serial
                 return (Factory)Activator.CreateInstance(type);
             }
 
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+                var assembly = Assembly.Load("Dandy.Devices.Serial.Linux");
+                var type = assembly.GetType("Dandy.Devices.Serial.Linux.Factory");
+                return (Factory)Activator.CreateInstance(type);
+            }
+
             throw new NotSupportedException("The current platform is not supported");
         }
 

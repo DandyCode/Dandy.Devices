@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Dandy.Devices.Serial</AssemblyName>
     <RootNamespace>Dandy.Devices.Serial</RootNamespace>
-    <Version>1.0.0-a1.2</Version>
+    <Version>1.0.0-a1.3</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 

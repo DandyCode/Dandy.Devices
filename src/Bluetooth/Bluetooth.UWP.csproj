@@ -113,6 +113,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Adapter.cs" />
+    <Compile Include="Advertisement.cs" />
+    <Compile Include="BLEAdvertisementReceivedEventArgs.cs" />
+    <Compile Include="BLEAdvertisementStoppedEventArgs.cs" />
+    <Compile Include="BLEAdvertisementWatcher.cs" />
     <Compile Include="BLEDevice.cs" />
     <Compile Include="BluetoothAddress.cs" />
     <Compile Include="DeviceInfo.cs" />
@@ -120,6 +124,10 @@
     <Compile Include="DeviceWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UWP\Adapter.cs" />
+    <Compile Include="UWP\Advertisement.cs" />
+    <Compile Include="UWP\BLEAdvertisementReceivedEventArgs.cs" />
+    <Compile Include="UWP\BLEAdvertisementStoppedEventArgs.cs" />
+    <Compile Include="UWP\BLEAdvertisementWatcher.cs" />
     <Compile Include="UWP\BLEDevice.cs" />
     <Compile Include="UWP\DeviceInfo.cs" />
     <Compile Include="UWP\DeviceInfoUpdate.cs" />

@@ -17,7 +17,7 @@ namespace Dandy.Devices.Bluetooth
             this.device = device ?? throw new ArgumentNullException(nameof(device));
         }
 
-        BluetoothAddress _get_BluetoothAddress() => BluetoothAddress.FromUint(device.BluetoothAddress);
+        BluetoothAddress _get_BluetoothAddress() => BluetoothAddress.FromULong(device.BluetoothAddress);
 
         string _get_Name() => device.Name;
 

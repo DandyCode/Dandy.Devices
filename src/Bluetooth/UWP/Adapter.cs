@@ -17,7 +17,7 @@ namespace Dandy.Devices.Bluetooth
             this.adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
         }
 
-        BluetoothAddress _get_BluetoothAddress() => BluetoothAddress.FromUint(adapter.BluetoothAddress);
+        BluetoothAddress _get_BluetoothAddress() => BluetoothAddress.FromULong(adapter.BluetoothAddress);
 
         static Task<Adapter> _FromIdAsync(string id) => BluetoothAdapter.FromIdAsync(id).AsTask().ContinueWith(a => new Adapter(a.Result));
     }

@@ -52,7 +52,7 @@ namespace Dandy.Devices.Bluetooth
         /// <summary>
         /// Gets a Bluetooth address from a unsigned integer value.
         /// </summary>
-        public static BluetoothAddress FromUint(ulong bluetoothAddress)
+        public static BluetoothAddress FromULong(ulong bluetoothAddress)
         {
             var bytes = BitConverter.GetBytes(bluetoothAddress);
 

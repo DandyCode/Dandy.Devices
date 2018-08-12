@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Dandy.Devices.Bluetooth;
@@ -11,8 +11,8 @@ namespace Dandy.Devices.Example.WatchBluetooth
         {
             var reset = new AutoResetEvent(false);
 
-            var watcher = DeviceInformation.CreateWatcher();
-            watcher.Added += (s, d) => Console.WriteLine($"Added: {d.Name} ({d.Id})");
+            var watcher = DeviceInfo.CreateWatcher();
+            watcher.Added += (s, d) => Console.WriteLine($"Added: {d.Name} @ {d.Address} ({d.Id})");
             // watcher.Updated += (s, d) => Console.WriteLine($"Updated: {d.Id}");
             watcher.Removed += (s, d) => Console.WriteLine($"Removed: {d.Id}");
             watcher.EnumerationCompleted += (s, e) => Console.WriteLine("Enumeration completed");

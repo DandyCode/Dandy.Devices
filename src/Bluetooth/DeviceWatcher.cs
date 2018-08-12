@@ -4,17 +4,17 @@ namespace Dandy.Devices.Bluetooth
 {
     public sealed partial class DeviceWatcher
     {
-        public event EventHandler<DeviceInformation> Added {
+        public event EventHandler<DeviceInfo> Added {
             add => _add_Added(value);
             remove => _remove_Added(value);
         }
 
-        public event EventHandler<DeviceInformationUpdate> Updated {
+        public event EventHandler<DeviceInfoUpdate> Updated {
             add => _add_Updated(value);
             remove => _remove_Updated(value);
         }
 
-        public event EventHandler<DeviceInformationUpdate> Removed {
+        public event EventHandler<DeviceInfoUpdate> Removed {
             add => _add_Removed(value);
             remove => _remove_Removed(value);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 
@@ -19,7 +19,7 @@ namespace Dandy.Devices.Bluetooth
         /// <inheritdoc/>
         public override string ToString()
         {
-            return string.Format("{0:X2}:{0:X2}:{0:X2}:{0:X2}:{0:X2}:{0:X2}", b5, b4, b3, b2, b1, b0);
+            return string.Format("{0:X2}:{1:X2}:{2:X2}:{3:X2}:{4:X2}:{5:X2}", b5, b4, b3, b2, b1, b0);
         }
 
         /// <summary>
@@ -50,6 +50,23 @@ namespace Dandy.Devices.Bluetooth
         }
 
         /// <summary>
+        /// Gets a Bluetooth address from a unsigned integer value.
+        /// </summary>
+        public static BluetoothAddress FromUint(ulong bluetoothAddress)
+        {
+            var bytes = BitConverter.GetBytes(bluetoothAddress);
+
+            return new BluetoothAddress {
+                b0 = bytes[0],
+                b1 = bytes[1],
+                b2 = bytes[2],
+                b3 = bytes[3],
+                b4 = bytes[4],
+                b5 = bytes[5]
+            };
+        }
+
+        /// <summary>
         /// Gets a Bluetooth address from a span.
         /// </summary>
         public static BluetoothAddress FromSpan(ReadOnlySpan<byte> span, bool bigEndian = false)
@@ -68,6 +85,7 @@ namespace Dandy.Devices.Bluetooth
                     b5 = span[0],
                 };
             }
+
             return new BluetoothAddress {
                 b0 = span[0],
                 b1 = span[1],

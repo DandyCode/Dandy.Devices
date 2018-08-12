@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Dandy.Devices.Bluetooth
 {
-    public sealed partial class DeviceInformationUpdate
+    public sealed partial class DeviceInfoUpdate
     {
         /// <summary>
         /// Platform-specific device identifier.

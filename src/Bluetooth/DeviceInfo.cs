@@ -6,7 +6,7 @@ namespace Dandy.Devices.Bluetooth
     /// <summary>
     /// Represents a Bluetooth device.
     /// </summary>
-    public sealed partial class DeviceInformation
+    public sealed partial class DeviceInfo
     {
         /// <summary>
         /// Creates a device watcher for monitoring all Bluetooth devices.
@@ -16,7 +16,7 @@ namespace Dandy.Devices.Bluetooth
         /// <summary>
         /// Enumerates all Bluetooth devices.
         /// </summary>
-        public static Task<IEnumerable<DeviceInformation>> FindAllAsync() => _FindAllAsync();
+        public static Task<IEnumerable<DeviceInfo>> FindAllAsync() => _FindAllAsync();
 
         /// <summary>
         /// Platform-specific device identifier.
@@ -31,11 +31,16 @@ namespace Dandy.Devices.Bluetooth
         /// <summary>
         /// Gets a dictionary of platform-specific properties.
         /// </summary>
+        public BluetoothAddress Address => _get_Address();
+
+        /// <summary>
+        /// Gets a dictionary of platform-specific properties.
+        /// </summary>
         public IReadOnlyDictionary<string, object> Properties => _get_Properties();
 
         /// <summary>
         /// Updates the properties of this device information.
         /// </summary>
-        public void Update(DeviceInformationUpdate updateInfo) => _Update(updateInfo);
+        public void Update(DeviceInfoUpdate updateInfo) => _Update(updateInfo);
     }
 }

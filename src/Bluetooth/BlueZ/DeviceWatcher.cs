@@ -23,16 +23,17 @@ namespace Dandy.Devices.Bluetooth
             watchers = new Stack<IDisposable>();
         }
 
-        event EventHandler<DeviceInformation> _Added;
-        void _add_Added(EventHandler<DeviceInformation> handler) => _Added += handler;
-        void _remove_Added(EventHandler<DeviceInformation> handler) => _Added -= handler;
+        event EventHandler<DeviceInfo> _Added;
+        void _add_Added(EventHandler<DeviceInfo> handler) => _Added += handler;
+        void _remove_Added(EventHandler<DeviceInfo> handler) => _Added -= handler;
 
-        void _add_Updated(EventHandler<DeviceInformationUpdate> handler) => throw new NotImplementedException();
-        void _remove_Updated(EventHandler<DeviceInformationUpdate> handler) => throw new NotImplementedException();
+        event EventHandler<DeviceInfoUpdate> _Updated;
+        void _add_Updated(EventHandler<DeviceInfoUpdate> handler) => _Updated += handler;
+        void _remove_Updated(EventHandler<DeviceInfoUpdate> handler) => _Updated -= handler;
 
-        event EventHandler<DeviceInformationUpdate> _Removed;
-        void _add_Removed(EventHandler<DeviceInformationUpdate> handler) => _Removed += handler;
-        void _remove_Removed(EventHandler<DeviceInformationUpdate> handler) => _Removed -= handler;
+        event EventHandler<DeviceInfoUpdate> _Removed;
+        void _add_Removed(EventHandler<DeviceInfoUpdate> handler) => _Removed += handler;
+        void _remove_Removed(EventHandler<DeviceInfoUpdate> handler) => _Removed -= handler;
 
         event EventHandler _EnumerationCompleted;
         void _add_EnumerationCompleted(EventHandler handler) => _EnumerationCompleted += handler;
@@ -48,6 +49,7 @@ namespace Dandy.Devices.Bluetooth
                 watchers.Push(await proxy.WatchInterfacesAddedAsync(OnAdded));
                 watchers.Push(await proxy.WatchInterfacesRemovedAsync(OnRemoved));
                 // TODO: how to watch PropertiesChanged signal for all objects?
+                // until then, we will never get an Updated event
                 var devices = await proxy.GetManagedObjectsAsync();
                 foreach (var device in devices) {
                     OnAdded((device.Key, device.Value));
@@ -72,7 +74,7 @@ namespace Dandy.Devices.Bluetooth
                 if (!interfaceNames.Contains(iface.Key)) {
                     continue;
                 }
-                _Added?.Invoke(this, new DeviceInformation(obj.@object, iface.Key, iface.Value));
+                _Added?.Invoke(this, new DeviceInfo(obj.@object, iface.Key, iface.Value));
             }
         }
 
@@ -82,7 +84,7 @@ namespace Dandy.Devices.Bluetooth
                 if (!interfaceNames.Contains(iface)) {
                     continue;
                 }
-                _Removed?.Invoke(this, new DeviceInformationUpdate(obj.@object, iface, null));
+                _Removed?.Invoke(this, new DeviceInfoUpdate(obj.@object, iface, null));
             }
         }
     }

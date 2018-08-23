@@ -11,7 +11,7 @@ namespace Dandy.Devices.Bluetooth
             this.args = args ?? throw new System.ArgumentNullException(nameof(args));
         }
 
-        Advertisement _get_Advertisement() => new Advertisement(args.Advertisement);
+        BLEAdvertisement _get_Advertisement() => new BLEAdvertisement(args.Advertisement);
 
         BluetoothAddress _get_Address() => BluetoothAddress.FromULong(args.BluetoothAddress);
     }

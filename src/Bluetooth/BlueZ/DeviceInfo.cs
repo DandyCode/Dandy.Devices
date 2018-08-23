@@ -6,7 +6,7 @@ using Tmds.DBus;
 
 namespace Dandy.Devices.Bluetooth
 {
-    partial class DeviceInformation
+    partial class DeviceInfo
     {
         internal ObjectPath ObjectPath { get; }
 
@@ -19,10 +19,10 @@ namespace Dandy.Devices.Bluetooth
             return new DeviceWatcher();
         }
 
-        static Task<IEnumerable<DeviceInformation>> _FindAllAsync()
+        static Task<IEnumerable<DeviceInfo>> _FindAllAsync()
         {
-            var completion = new TaskCompletionSource<IEnumerable<DeviceInformation>>();
-            var list = new List<DeviceInformation>();
+            var completion = new TaskCompletionSource<IEnumerable<DeviceInfo>>();
+            var list = new List<DeviceInfo>();
 
             var watcher = new DeviceWatcher();
             watcher.Added += (s, e) => list.Add(e);
@@ -33,7 +33,7 @@ namespace Dandy.Devices.Bluetooth
             return completion.Task;
         }
 
-        internal DeviceInformation(ObjectPath @object, string @interface, IDictionary<string, object> properties)
+        internal DeviceInfo(ObjectPath @object, string @interface, IDictionary<string, object> properties)
         {
             ObjectPath = @object;
             Interface = @interface ?? throw new ArgumentNullException(nameof(@interface));
@@ -44,9 +44,11 @@ namespace Dandy.Devices.Bluetooth
 
         string _get_Name() => (string)properties["Alias"];
 
+        BluetoothAddress _get_Address() => BluetoothAddress.Parse((string)properties["Address"]);
+
         IReadOnlyDictionary<string, object> _get_Properties() => (IReadOnlyDictionary<string, object>)properties;
 
-        void _Update(DeviceInformationUpdate updateInfo)
+        void _Update(DeviceInfoUpdate updateInfo)
         {
             if (updateInfo == null) {
                 throw new ArgumentNullException(nameof(updateInfo));

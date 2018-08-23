@@ -5,7 +5,7 @@ using Tmds.DBus;
 
 namespace Dandy.Devices.Bluetooth
 {
-    partial class DeviceInformationUpdate
+    partial class DeviceInfoUpdate
     {
         private readonly IDictionary<string, object> properties;
 
@@ -13,7 +13,7 @@ namespace Dandy.Devices.Bluetooth
 
         internal string Interface { get; }
 
-        internal DeviceInformationUpdate(ObjectPath @object, string @interface, IDictionary<string, object> properties)
+        internal DeviceInfoUpdate(ObjectPath @object, string @interface, IDictionary<string, object> properties)
         {
             ObjectPath = @object;
             Interface = @interface ?? throw new ArgumentNullException(nameof(@interface));

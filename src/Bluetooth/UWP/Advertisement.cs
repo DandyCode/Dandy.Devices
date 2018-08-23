@@ -1,13 +1,15 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace Dandy.Devices.Bluetooth
-{partial class Advertisement
+{
+    partial class BLEAdvertisement
     {
-        private readonly Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisement advertisement;
+        private readonly BluetoothLEAdvertisement advertisement;
 
-        internal Advertisement(Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisement advertisement)
+        internal BLEAdvertisement(BluetoothLEAdvertisement advertisement)
         {
             this.advertisement = advertisement ?? throw new ArgumentNullException(nameof(advertisement));
         }

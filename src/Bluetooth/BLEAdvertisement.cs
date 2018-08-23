@@ -6,9 +6,9 @@ namespace Dandy.Devices.Bluetooth
     /// <summary>
     /// Bluetooth Low Energy advertisement payload
     /// </summary>
-    public sealed partial class Advertisement
+    public sealed partial class BLEAdvertisement
     {
-        Advertisement() => throw new NotSupportedException();
+        BLEAdvertisement() => throw new NotSupportedException();
 
         /// <summary>
         /// The local name contained within the advertisement. This property can be either

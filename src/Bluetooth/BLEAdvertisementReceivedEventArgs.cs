@@ -12,7 +12,7 @@ namespace Dandy.Devices.Bluetooth
         /// <summary>
         /// Gets the advertisement
         /// </summary>
-        public Advertisement Advertisement => _get_Advertisement();
+        public BLEAdvertisement Advertisement => _get_Advertisement();
 
         /// <summary>
         /// Gets the Bluetooth Address of the advertiser

@@ -3,27 +3,26 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Dandy.Devices.Usb
 {
     /// <summary>
     /// Factory for creating interface instances.
     /// </summary>
-    public static class Factory
+    public static partial class Factory
     {
         /// <summary>
-        /// Create a device watcher for detecting USB hotplug events.
+        /// Finds all currently attached USB devices.
         /// </summary>
-        /// <returns>A new device watcher</returns>
-        public static IDeviceWatcher CreateDeviceWatcher()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                var assembly = Assembly.Load("Dandy.Devices.Usb.Uwp");
-                var type = assembly.GetType("Dandy.Devices.Usb.Uwp.DeviceWatcher");
-                return (IDeviceWatcher)Activator.CreateInstance(type);
-            }
+        /// <returns>The list of devices.</returns>
+        public static Task<IEnumerable<DeviceInfo>> FindAllAsync() => _FindAllAsync();
 
-            throw new NotSupportedException("The current platform is not supported");
-        }
+        /// <summary>
+        /// Finds all currently attached USB devices with the given USB
+        /// vendor ID and product ID.
+        /// </summary>
+        /// <returns>The list of devices.</returns>
+        public static Task<IEnumerable<DeviceInfo>> FindAllAsync(ushort vendorId, ushort productId) => _FindAllAsync(vendorId, productId);
     }
 }

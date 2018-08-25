@@ -5,13 +5,12 @@ namespace Dandy.Devices.Bluetooth
 {
     partial class BLEAdvertisement
     {
-        internal BLEAdvertisement()
+        internal BLEAdvertisement(object x, object y)
         {
-
         }
 
-        public string LocalName => _get_LocalName();
+        string _get_LocalName() => throw new NotImplementedException();
 
-        public IReadOnlyList<Guid> ServiceUuids => _get_ServiceUuids();
+        IReadOnlyList<Guid> _get_ServiceUuids() => throw new NotImplementedException();
     }
 }

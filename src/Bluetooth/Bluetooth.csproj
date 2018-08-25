@@ -7,6 +7,7 @@
     <LangVersion>latest</LangVersion>
     <EnableDefaultItems>false</EnableDefaultItems>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,7 @@
 
   <ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">
     <Compile Include="BlueZ/*.cs" />
-    <PackageReference Include="Tmds.DBus" Version="0.6.0" />
+    <PackageReference Include="Tmds.DBus" Version="0.7.0" />
   </ItemGroup>
 
 </Project>

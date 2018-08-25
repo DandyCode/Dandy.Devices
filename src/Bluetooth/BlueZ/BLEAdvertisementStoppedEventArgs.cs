@@ -4,7 +4,7 @@ namespace Dandy.Devices.Bluetooth
 {
     public sealed partial class BLEAdvertisementStoppedEventArgs
     {
-        internal BLEAdvertisementStoppedEventArgs()
+        internal BLEAdvertisementStoppedEventArgs(object x)
         {
 
         }

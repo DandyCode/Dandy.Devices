@@ -191,6 +191,7 @@ namespace bluez.DBus
         public static Task<IDictionary<string, object>> GetServiceDataAsync(this IDevice1 o) => o.GetAsync<IDictionary<string, object>>("ServiceData");
         public static Task<short> GetTxPowerAsync(this IDevice1 o) => o.GetAsync<short>("TxPower");
         public static Task<bool> GetServicesResolvedAsync(this IDevice1 o) => o.GetAsync<bool>("ServicesResolved");
+        public static Task<byte[]> GetAdvertisingFlagsAsync(this IDevice1 o) => o.GetAsync<byte[]>("AdvertisingFlags");
         public static Task SetAliasAsync(this IDevice1 o, string val) => o.SetAsync("Alias", val);
         public static Task SetTrustedAsync(this IDevice1 o, bool val) => o.SetAsync("Trusted", val);
         public static Task SetBlockedAsync(this IDevice1 o, bool val) => o.SetAsync("Blocked", val);
@@ -226,6 +227,67 @@ namespace bluez.DBus
     static class Input1Extensions
     {
         public static Task<string> GetReconnectModeAsync(this IInput1 o) => o.GetAsync<string>("ReconnectMode");
+    }
+
+    [DBusInterface("org.bluez.GattService1")]
+    interface IGattService1 : IDBusObject
+    {
+        Task<T> GetAsync<T>(string prop);
+        Task<IDictionary<string, object>> GetAllAsync();
+        Task SetAsync(string prop, object val);
+        Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
+    }
+
+    static class GattService1Extensions
+    {
+        public static Task<string> GetUUIDAsync(this IGattService1 o) => o.GetAsync<string>("UUID");
+        public static Task<ObjectPath> GetDeviceAsync(this IGattService1 o) => o.GetAsync<ObjectPath>("Device");
+        public static Task<bool> GetPrimaryAsync(this IGattService1 o) => o.GetAsync<bool>("Primary");
+        public static Task<ObjectPath[]> GetIncludesAsync(this IGattService1 o) => o.GetAsync<ObjectPath[]>("Includes");
+    }
+
+    [DBusInterface("org.bluez.GattCharacteristic1")]
+    interface IGattCharacteristic1 : IDBusObject
+    {
+        Task<byte[]> ReadValueAsync(IDictionary<string, object> Options);
+        Task WriteValueAsync(byte[] Value, IDictionary<string, object> Options);
+        Task<(CloseSafeHandle fd, ushort mtu)> AcquireWriteAsync(IDictionary<string, object> Options);
+        Task<(CloseSafeHandle fd, ushort mtu)> AcquireNotifyAsync(IDictionary<string, object> Options);
+        Task StartNotifyAsync();
+        Task StopNotifyAsync();
+        Task<T> GetAsync<T>(string prop);
+        Task<IDictionary<string, object>> GetAllAsync();
+        Task SetAsync(string prop, object val);
+        Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
+    }
+
+    static class GattCharacteristic1Extensions
+    {
+        public static Task<string> GetUUIDAsync(this IGattCharacteristic1 o) => o.GetAsync<string>("UUID");
+        public static Task<ObjectPath> GetServiceAsync(this IGattCharacteristic1 o) => o.GetAsync<ObjectPath>("Service");
+        public static Task<byte[]> GetValueAsync(this IGattCharacteristic1 o) => o.GetAsync<byte[]>("Value");
+        public static Task<bool> GetNotifyingAsync(this IGattCharacteristic1 o) => o.GetAsync<bool>("Notifying");
+        public static Task<string[]> GetFlagsAsync(this IGattCharacteristic1 o) => o.GetAsync<string[]>("Flags");
+        public static Task<bool> GetWriteAcquiredAsync(this IGattCharacteristic1 o) => o.GetAsync<bool>("WriteAcquired");
+        public static Task<bool> GetNotifyAcquiredAsync(this IGattCharacteristic1 o) => o.GetAsync<bool>("NotifyAcquired");
+    }
+
+    [DBusInterface("org.bluez.GattDescriptor1")]
+    interface IGattDescriptor1 : IDBusObject
+    {
+        Task<byte[]> ReadValueAsync(IDictionary<string, object> Options);
+        Task WriteValueAsync(byte[] Value, IDictionary<string, object> Options);
+        Task<T> GetAsync<T>(string prop);
+        Task<IDictionary<string, object>> GetAllAsync();
+        Task SetAsync(string prop, object val);
+        Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
+    }
+
+    static class GattDescriptor1Extensions
+    {
+        public static Task<string> GetUUIDAsync(this IGattDescriptor1 o) => o.GetAsync<string>("UUID");
+        public static Task<ObjectPath> GetCharacteristicAsync(this IGattDescriptor1 o) => o.GetAsync<ObjectPath>("Characteristic");
+        public static Task<byte[]> GetValueAsync(this IGattDescriptor1 o) => o.GetAsync<byte[]>("Value");
     }
 
     [DBusInterface("org.bluez.MediaControl1")]

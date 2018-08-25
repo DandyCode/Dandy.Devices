@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,9 +30,34 @@ namespace Dandy.Devices.Bluetooth
         public string Name => _get_Name();
 
         /// <summary>
-        /// Gets a dictionary of platform-specific properties.
+        /// Gets the Bluetooth device address
         /// </summary>
         public BluetoothAddress Address => _get_Address();
+
+        /// <summary>
+        /// Indicates if the device is currently connected.
+        /// </summary>
+        public bool IsConnected => _get_IsConnected();
+
+        /// <summary>
+        /// Gets a list of service UUIDs for the device
+        /// </summary>
+        public IReadOnlyList<Guid> ServiceUuids => _get_ServiceUuids();
+
+        /// <summary>
+        /// Gets the service advertisement data for a BLE device
+        /// </summary>
+        public IReadOnlyDictionary<Guid, ReadOnlyMemory<byte>> ServiceData => _get_ServiceData();
+
+        /// <summary>
+        /// Gets the manufacturer-specific advertisement data for a BLE device
+        /// </summary>
+        public IReadOnlyDictionary<ushort, ReadOnlyMemory<byte>> ManufacturerData => _get_ManufacturerData();
+
+        /// <summary>
+        /// Gets the advertised transmit power for a BLE device
+        /// </summary>
+        public short TxPower => _get_TxPower();
 
         /// <summary>
         /// Gets a dictionary of platform-specific properties.

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Bluetooth\Bluetooth.csproj" />
+    <ProjectReference Include="..\..\src\BluetoothLE\BluetoothLE.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serial", "src\Serial\Serial
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.Uwp.Tests", "test\Serial.Uwp.Tests\Serial.Uwp.Tests.csproj", "{82979E0C-CDFE-4F18-8728-1711DDEA0F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bluetooth.UWP", "src\Bluetooth\Bluetooth.UWP.csproj", "{433F9276-EC82-4E58-A4A3-F1920296FA0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluetoothLE.UWP", "src\BluetoothLE\BluetoothLE.UWP.csproj", "{433F9276-EC82-4E58-A4A3-F1920296FA0E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchBluetooth.UWP", "example\WatchBluetooth\WatchBluetooth.UWP.csproj", "{82D62CE7-235C-492F-A06E-4CC272CB62E7}"
 EndProject

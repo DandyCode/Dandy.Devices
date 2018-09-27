@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dandy.Devices.Bluetooth;
+using Dandy.Devices.BluetoothLE;
 
 namespace Dandy.Devices.Example.WatchBluetooth
 {

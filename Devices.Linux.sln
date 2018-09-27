@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial.Linux", "src\Serial.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Usb", "src\Usb\Usb.csproj", "{F72B7FF1-5487-44CF-ACDB-2C3CAC00FF28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bluetooth", "src\Bluetooth\Bluetooth.csproj", "{2E275B53-7BFD-4C3C-B51D-CA19226ACE45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BluetoothLE", "src\BluetoothLE\BluetoothLE.csproj", "{2E275B53-7BFD-4C3C-B51D-CA19226ACE45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchBluetooth", "example\WatchBluetooth\WatchBluetooth.csproj", "{5EDA13FE-461F-4E48-9CCA-A241D79FB863}"
 EndProject

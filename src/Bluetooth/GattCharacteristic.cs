@@ -17,7 +17,7 @@ namespace Dandy.Devices.Bluetooth
         /// <summary>
         /// Issues a request to write the value of the characteristic.
         /// </summary>
-        public Task WriteValueAsync(Memory<byte> data, GattWriteOption option = GattWriteOption.WriteWithResponse) => _WriteValueAsync(data, option);
+        public Task WriteValueAsync(ReadOnlyMemory<byte> data, GattWriteOption option = GattWriteOption.WriteWithResponse) => _WriteValueAsync(data, option);
 
         /// <summary>
         /// Issues a request to read the value of the characteristic.

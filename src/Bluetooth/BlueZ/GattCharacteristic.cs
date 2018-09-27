@@ -55,7 +55,7 @@ namespace Dandy.Devices.Bluetooth
         const int EINTR = 4;
         const int EAGAIN = 11;
 
-        async Task _WriteValueAsync(Memory<byte> data, GattWriteOption option) {
+        async Task _WriteValueAsync(ReadOnlyMemory<byte> data, GattWriteOption option) {
             if (option == GattWriteOption.WriteWithoutResponse) {
                 var (fd, mtu) = await proxy.AcquireWriteAsync(new Dictionary<string, object>());
                 // do low level file I/O in background task

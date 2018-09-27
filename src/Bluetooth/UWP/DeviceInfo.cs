@@ -45,6 +45,16 @@ namespace Dandy.Devices.Bluetooth
 
         BluetoothAddress _get_Address() => BluetoothAddress.Parse((string)info.Properties[deviceAddress]);
 
+        bool _get_IsConnected() => (bool)info.Properties[isConnected];
+
+        IReadOnlyList<Guid> _get_ServiceUuids() => throw new NotImplementedException();
+
+        IReadOnlyDictionary<Guid, ReadOnlyMemory<byte>> _get_ServiceData() => throw new NotImplementedException();
+
+        IReadOnlyDictionary<ushort, ReadOnlyMemory<byte>> _get_ManufacturerData() => throw new NotImplementedException();
+
+        short _get_TxPower() => throw new NotImplementedException();
+
         IReadOnlyDictionary<string, object> _get_Properties() => info.Properties;
 
         void _Update(DeviceInfoUpdate updateInfo) => info.Update(updateInfo.UpdateInfo);

@@ -49,10 +49,16 @@ namespace Dandy.Devices.BluetoothLE
             }
         }
 
+        internal ulong ToULong()
+        {
+            var bytes = new byte[] { b0, b1, b2, b3, b4, b5, 0, 0 };
+            return BitConverter.ToUInt64(bytes, 0);
+        }
+
         /// <summary>
         /// Gets a Bluetooth address from a unsigned integer value.
         /// </summary>
-        public static BluetoothAddress FromULong(ulong bluetoothAddress)
+        internal static BluetoothAddress FromULong(ulong bluetoothAddress)
         {
             var bytes = BitConverter.GetBytes(bluetoothAddress);
 

@@ -8,19 +8,6 @@ namespace Dandy.Devices.BluetoothLE
     /// </summary>
     public sealed partial class AdvertisementWatcher
     {
-        const string bleDevices = "System.Devices.Aep.ProtocolId:=\"{BB7BB05E-5972-42B5-94FC-76EAA7084D49}\"";
-
-        // available properties: https://msdn.microsoft.com/en-us/library/windows/desktop/ff521659(v=vs.85).aspx
-        const string deviceAddress = "System.Devices.Aep.DeviceAddress";
-        const string isConnected = "System.Devices.Aep.IsConnected";
-        const string isConnectable = "System.Devices.Aep.Bluetooth.Le.IsConnectable";
-
-        private static readonly IEnumerable<string> properties = new List<string> {
-            deviceAddress,
-            isConnected,
-            isConnectable,
-        };
- 
         /// <summary>
         /// Triggered when a new advertisment is received.
         /// </summary>

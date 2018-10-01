@@ -25,6 +25,10 @@ namespace Dandy.Devices.BluetoothLE
         static Task<Device> _FromIdAsync(string id) => BluetoothLEDevice.FromIdAsync(id).AsTask()
             .ContinueWith(a => new Device(a.Result));
 
+        static Task<Device> _FromAddressAsync(BluetoothAddress address) =>
+            BluetoothLEDevice.FromBluetoothAddressAsync(address.ToULong()).AsTask()
+            .ContinueWith(t => new Device(t.Result));
+
         Task<IReadOnlyList<GattService>> _GetGattServicesAsync(Guid uuid)
         {
             return device.GetGattServicesForUuidAsync(uuid).AsTask().ContinueWith<IReadOnlyList<GattService>>(t => {

@@ -10,14 +10,25 @@ namespace Dandy.Devices.BluetoothLE
     public sealed partial class Device : IDisposable
     {
         /// <summary>
-        /// Gets the Bluetooth address of the adapter.
+        /// Gets the name of the device.
+        /// </summary>
+        public string Name => _get_Name();
+
+        /// <summary>
+        /// Gets the Bluetooth address of the device.
         /// </summary>
         public BluetoothAddress BluetoothAddress => _get_BluetoothAddress();
 
         /// <summary>
-        /// Gets an instance of a Bluetooth adapter from a platform-specific id.
+        /// Gets an instance of a Bluetooth LE device from a platform-specific id.
         /// </summary>
         public static Task<Device> FromIdAsync(string id) => _FromIdAsync(id);
+
+        /// <summary>
+        /// Gets an instance of a Bluetooth LE device from a Bluetooth address.
+        /// </summary>
+        /// <param name="address">The Bluetooth address</param>
+        public static Task<Device> FromAddressAsync(BluetoothAddress address) => _FromAddressAsync(address);
 
         /// <summary>
         /// Gets a list of GATT services for the specified UUID.

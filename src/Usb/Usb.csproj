@@ -12,11 +12,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(DandyLocalDev)' == ''">
-    <PackageReference Include="Dandy.Libusb" Version="1.0.0-a1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(DandyLocalDev)' != ''">
+  <ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))">
     <ProjectReference Include="..\..\..\Dandy.Libusb\src\Libusb\Libusb.csproj" />
   </ItemGroup>
 

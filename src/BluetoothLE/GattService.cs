@@ -17,6 +17,6 @@ namespace Dandy.Devices.BluetoothLE
         /// <summary>
         /// Gets a list of characteristics for the service
         /// </summary>
-        public Task<IReadOnlyList<GattCharacteristic>> GetCharacteristicsAsync() => _GetCharacteristicsAsync();
+        public Task<IReadOnlyList<GattCharacteristic>> GetCharacteristicsAsync(Guid uuid) => _GetCharacteristicsAsync(uuid);
     }
 }

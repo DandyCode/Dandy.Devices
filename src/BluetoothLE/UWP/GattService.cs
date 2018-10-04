@@ -18,9 +18,9 @@ namespace Dandy.Devices.BluetoothLE
 
         Guid _get_Uuid() => service.Uuid;
 
-        Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync()
+        Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync(Guid uuid)
         {
-            return service.GetCharacteristicsAsync().AsTask().ContinueWith<IReadOnlyList<GattCharacteristic>>(t => {
+            return service.GetCharacteristicsForUuidAsync(uuid).AsTask().ContinueWith<IReadOnlyList<GattCharacteristic>>(t => {
                 switch (t.Result.Status) {
                 case Win.GattCommunicationStatus.Success:
                     return t.Result.Characteristics.Select(x => new GattCharacteristic(x)).ToList().AsReadOnly();

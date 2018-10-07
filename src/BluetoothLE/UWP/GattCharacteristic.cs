@@ -11,25 +11,11 @@ namespace Dandy.Devices.BluetoothLE
     partial class GattCharacteristic
     {
         private readonly Win.GattCharacteristic characteristic;
-        private Dictionary<EventHandler<GattValueChangedEventArgs>,
-            TypedEventHandler<Win.GattCharacteristic, Win.GattValueChangedEventArgs>> valueChangedHandlerMap;
-
-        static GattCharacteristic()
-        {
-            // verify assumptions
-            if ((int)Win.GattWriteOption.WriteWithResponse != (int)GattWriteOption.WriteWithResponse) {
-                throw new TypeLoadException($"Bad {typeof(GattWriteOption)}{nameof(GattWriteOption.WriteWithResponse)} value");
-            }
-            if ((int)Win.GattWriteOption.WriteWithoutResponse != (int)GattWriteOption.WriteWithoutResponse) {
-                throw new TypeLoadException($"Bad {typeof(GattWriteOption)}{nameof(GattWriteOption.WriteWithoutResponse)} value");
-            }
-        }
-
+        
         internal GattCharacteristic(Win.GattCharacteristic characteristic)
         {
             this.characteristic = characteristic ?? throw new ArgumentNullException(nameof(characteristic));
-            valueChangedHandlerMap = new Dictionary<EventHandler<GattValueChangedEventArgs>,
-                TypedEventHandler<Win.GattCharacteristic, Win.GattValueChangedEventArgs>>();
+            characteristic.ValueChanged += Characteristic_ValueChanged;
         }
 
         Guid _get_Uuid() => characteristic.Uuid;
@@ -39,7 +25,28 @@ namespace Dandy.Devices.BluetoothLE
             // REVISIT: copying everything twice
             var writer = new DataWriter();
             writer.WriteBytes(data.ToArray());
-            return characteristic.WriteValueWithResultAsync(writer.DetachBuffer(), (Win.GattWriteOption)option).AsTask();
+            switch (option) {
+            case GattWriteOption.WriteWithResponse:
+                return characteristic.WriteValueWithResultAsync(writer.DetachBuffer()).AsTask().ContinueWith(t => {
+                    switch (t.Result.Status) {
+                    case Win.GattCommunicationStatus.Success:
+                        return;
+                    default:
+                        throw new Exception();
+                    }
+                });
+            case GattWriteOption.WriteWithoutResponse:
+                return characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask().ContinueWith(t => {
+                    switch (t.Result) {
+                    case Win.GattCommunicationStatus.Success:
+                        return;
+                    default:
+                        throw new Exception();
+                    }
+                });
+            default:
+                throw new ArgumentException("Invalid write option", nameof(option));
+            }
         }
 
         Task<Memory<byte>> _ReadValueAsync()
@@ -66,37 +73,49 @@ namespace Dandy.Devices.BluetoothLE
         Task _StartNotifyAsync()
         {
             return characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                Win.GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask();
+                Win.GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask()
+                .ContinueWith(t => {
+                    switch (t.Result) {
+                    case Win.GattCommunicationStatus.Success:
+                        break;
+                    case Win.GattCommunicationStatus.AccessDenied:
+                        throw new AccessViolationException();
+                    case Win.GattCommunicationStatus.ProtocolError:
+                    case Win.GattCommunicationStatus.Unreachable:
+                        throw new Exception();
+                    default:
+                        throw new InvalidOperationException();
+                    }
+                });
         }
 
         Task _StopNotifyAsync()
         {
             return characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                Win.GattClientCharacteristicConfigurationDescriptorValue.None).AsTask();
+                Win.GattClientCharacteristicConfigurationDescriptorValue.None).AsTask()
+                .ContinueWith(t => {
+                    switch (t.Result) {
+                    case Win.GattCommunicationStatus.Success:
+                        break;
+                    case Win.GattCommunicationStatus.AccessDenied:
+                        throw new AccessViolationException();
+                    case Win.GattCommunicationStatus.ProtocolError:
+                    case Win.GattCommunicationStatus.Unreachable:
+                        throw new Exception();
+                    default:
+                        throw new InvalidOperationException();
+                    }
+                });
         }
-
-        void _add_ValueChanged(EventHandler<GattValueChangedEventArgs> handler)
-        {
-            TypedEventHandler<Win.GattCharacteristic, Win.GattValueChangedEventArgs> wrapper = (s, e) => {
-
-            };
-
-            valueChangedHandlerMap.Add(handler, wrapper);
-
-            characteristic.ValueChanged += wrapper;
-        }
-
-        void _remove_ValueChanged(EventHandler<GattValueChangedEventArgs> handler)
-        {
-            if (valueChangedHandlerMap.TryGetValue(handler, out var wrapper)) {
-                characteristic.ValueChanged -= wrapper;
-                valueChangedHandlerMap.Remove(handler);
-            }
-        }
-
+        
         /// <inheritdoc/>
         public void Dispose()
         {
+        }
+
+        private void Characteristic_ValueChanged(Win.GattCharacteristic sender, Win.GattValueChangedEventArgs args)
+        {
+            OnValueChanged(args.CharacteristicValue.ToMemory());
         }
     }
 }

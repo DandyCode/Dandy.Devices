@@ -28,9 +28,11 @@ namespace Dandy.Devices.BluetoothLE
 
         public Task StopNotifyAsync() => _StopNotifyAsync();
 
-        public event EventHandler<GattValueChangedEventArgs> ValueChanged {
-            add => _add_ValueChanged(value);
-            remove => _remove_ValueChanged(value);
+        public event EventHandler<GattValueChangedEventArgs> ValueChanged;
+
+        private void OnValueChanged(Memory<byte> value)
+        {
+            ValueChanged?.Invoke(this, new GattValueChangedEventArgs(value));
         }
     }
 }

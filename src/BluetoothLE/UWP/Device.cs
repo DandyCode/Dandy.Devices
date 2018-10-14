@@ -16,11 +16,25 @@ namespace Dandy.Devices.BluetoothLE
         Device(BluetoothLEDevice device)
         {
             this.device = device ?? throw new ArgumentNullException(nameof(device));
+            device.NameChanged += Device_NameChanged;
+            device.ConnectionStatusChanged += Device_ConnectionStatusChanged;
+        }
+
+        private void Device_NameChanged(BluetoothLEDevice sender, object args)
+        {
+            OnPropertyChanged(nameof(Name));
+        }
+
+        private void Device_ConnectionStatusChanged(BluetoothLEDevice sender, object args)
+        {
+            OnPropertyChanged(nameof(IsConnected));
         }
 
         BluetoothAddress _get_BluetoothAddress() => BluetoothAddress.FromULong(device.BluetoothAddress);
 
         string _get_Name() => device.Name;
+
+        bool _get_IsConnected() => device.ConnectionStatus == BluetoothConnectionStatus.Connected;
 
         static Task<Device> _FromIdAsync(string id) => BluetoothLEDevice.FromIdAsync(id).AsTask()
             .ContinueWith(a => new Device(a.Result));
@@ -45,8 +59,10 @@ namespace Dandy.Devices.BluetoothLE
             });
         }
 
-        public void Dispose()
+        void _Dispose()
         {
+            device.NameChanged -= Device_NameChanged;
+            device.ConnectionStatusChanged -= Device_ConnectionStatusChanged;
             device.Dispose();
         }
     }

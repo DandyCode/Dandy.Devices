@@ -7,7 +7,7 @@ namespace Dandy.Devices.BluetoothLE
     /// <summary>
     /// A Bluetooth address. Stored in little-endian binary format.
     /// </summary>
-    public struct BluetoothAddress
+    public struct BluetoothAddress : IEquatable<BluetoothAddress>
     {
         byte b0;
         byte b1;
@@ -100,6 +100,40 @@ namespace Dandy.Devices.BluetoothLE
                 b4 = span[4],
                 b5 = span[5],
             };
+        }
+
+        /// <inheritdoc />
+        public bool Equals(BluetoothAddress other)
+        {
+            return b0 == other.b0 && b1 == other.b1 && b2 == other.b2 && b3 == other.b3 && b4 == other.b4 && b5 == other.b5;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj is BluetoothAddress other) {
+                Equals(other);
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return b0.GetHashCode() ^ b1.GetHashCode() ^ b2.GetHashCode() ^ b3.GetHashCode() ^ b4.GetHashCode() ^ b5.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public static bool operator ==(BluetoothAddress a, BluetoothAddress b)
+        {
+            return a.Equals(b);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(BluetoothAddress a, BluetoothAddress b)
+        {
+            return !a.Equals(b);
         }
     }
 }

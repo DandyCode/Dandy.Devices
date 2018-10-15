@@ -18,20 +18,19 @@ namespace Dandy.Devices.BluetoothLE
 
         Guid _get_Uuid() => service.Uuid;
 
-        Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync(Guid uuid)
+        async Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync(Guid uuid)
         {
-            return service.GetCharacteristicsForUuidAsync(uuid).AsTask().ContinueWith<IReadOnlyList<GattCharacteristic>>(t => {
-                switch (t.Result.Status) {
-                case Win.GattCommunicationStatus.Success:
-                    return t.Result.Characteristics.Select(x => new GattCharacteristic(x)).ToList().AsReadOnly();
-                case Win.GattCommunicationStatus.AccessDenied:
-                    throw new AccessViolationException("Access denied");
-                case Win.GattCommunicationStatus.ProtocolError:
-                case Win.GattCommunicationStatus.Unreachable:
-                default:
-                    throw new Exception("Need a better exception here");
-                }
-            });
+            var result = await service.GetCharacteristicsForUuidAsync(uuid);
+            switch (result.Status) {
+            case Win.GattCommunicationStatus.Success:
+                return result.Characteristics.Select(x => new GattCharacteristic(x)).ToList().AsReadOnly();
+            case Win.GattCommunicationStatus.AccessDenied:
+                throw new AccessViolationException("Access denied");
+            case Win.GattCommunicationStatus.ProtocolError:
+            case Win.GattCommunicationStatus.Unreachable:
+            default:
+                throw new Exception("Need a better exception here");
+            }
         }
 
         public void Dispose()

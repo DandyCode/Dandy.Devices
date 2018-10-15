@@ -36,27 +36,31 @@ namespace Dandy.Devices.BluetoothLE
 
         bool _get_IsConnected() => device.ConnectionStatus == BluetoothConnectionStatus.Connected;
 
-        static Task<Device> _FromIdAsync(string id) => BluetoothLEDevice.FromIdAsync(id).AsTask()
-            .ContinueWith(a => new Device(a.Result));
-
-        static Task<Device> _FromAddressAsync(BluetoothAddress address) =>
-            BluetoothLEDevice.FromBluetoothAddressAsync(address.ToULong()).AsTask()
-            .ContinueWith(t => new Device(t.Result));
-
-        Task<IReadOnlyList<GattService>> _GetGattServicesAsync(Guid uuid)
+        static async Task<Device> _FromIdAsync(string id)
         {
-            return device.GetGattServicesForUuidAsync(uuid).AsTask().ContinueWith<IReadOnlyList<GattService>>(t => {
-                switch (t.Result.Status) {
-                case Win.GattCommunicationStatus.Success:
-                    return t.Result.Services.Select(x => new GattService(x)).ToList().AsReadOnly();
-                case Win.GattCommunicationStatus.AccessDenied:
-                    throw new AccessViolationException("Access denied.");
-                case Win.GattCommunicationStatus.ProtocolError:
-                case Win.GattCommunicationStatus.Unreachable:
-                default:
-                    throw new Exception("Need a better exception here");
-                }
-            });
+            var device = await BluetoothLEDevice.FromIdAsync(id);
+            return new Device(device);
+        }
+
+        static async Task<Device> _FromAddressAsync(BluetoothAddress address)
+        {
+            var device = await BluetoothLEDevice.FromBluetoothAddressAsync(address.ToULong());
+            return new Device(device);
+        }
+
+        async Task<IReadOnlyList<GattService>> _GetGattServicesAsync(Guid uuid)
+        {
+            var result = await device.GetGattServicesForUuidAsync(uuid);
+            switch (result.Status) {
+            case Win.GattCommunicationStatus.Success:
+                return result.Services.Select(x => new GattService(x)).ToList().AsReadOnly();
+            case Win.GattCommunicationStatus.AccessDenied:
+                throw new AccessViolationException("Access denied.");
+            case Win.GattCommunicationStatus.ProtocolError:
+            case Win.GattCommunicationStatus.Unreachable:
+            default:
+                throw new Exception("Need a better exception here");
+            }
         }
 
         void _Dispose()

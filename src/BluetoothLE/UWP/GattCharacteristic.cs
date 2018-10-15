@@ -20,92 +20,85 @@ namespace Dandy.Devices.BluetoothLE
 
         Guid _get_Uuid() => characteristic.Uuid;
 
-        Task _WriteValueAsync(ReadOnlyMemory<byte> data, GattWriteOption option)
+        async Task _WriteValueAsync(ReadOnlyMemory<byte> data, GattWriteOption option)
         {
             // REVISIT: copying everything twice
             var writer = new DataWriter();
             writer.WriteBytes(data.ToArray());
             switch (option) {
             case GattWriteOption.WriteWithResponse:
-                return characteristic.WriteValueWithResultAsync(writer.DetachBuffer()).AsTask().ContinueWith(t => {
-                    switch (t.Result.Status) {
-                    case Win.GattCommunicationStatus.Success:
-                        return;
-                    default:
-                        throw new Exception();
-                    }
-                });
+                var result = await characteristic.WriteValueWithResultAsync(writer.DetachBuffer());
+                    switch (result.Status) {
+                case Win.GattCommunicationStatus.Success:
+                    return;
+                default:
+                    throw new Exception();
+                }
             case GattWriteOption.WriteWithoutResponse:
-                return characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask().ContinueWith(t => {
-                    switch (t.Result) {
-                    case Win.GattCommunicationStatus.Success:
-                        return;
-                    default:
-                        throw new Exception();
-                    }
-                });
+                var result2 = await characteristic.WriteValueAsync(writer.DetachBuffer());
+                switch (result2) {
+                case Win.GattCommunicationStatus.Success:
+                    return;
+                default:
+                    throw new Exception();
+                }
             default:
                 throw new ArgumentException("Invalid write option", nameof(option));
             }
         }
 
-        Task<Memory<byte>> _ReadValueAsync()
+        async Task<Memory<byte>> _ReadValueAsync()
         {
-            return characteristic.ReadValueAsync().AsTask().ContinueWith(t => {
-                switch (t.Result.Status) {
-                case Win.GattCommunicationStatus.Success:
-                    var data = new byte[t.Result.Value.Length];
-                    var reader = DataReader.FromBuffer(t.Result.Value);
-                    reader.ReadBytes(data);
-                    return (Memory<byte>)data;
-                case Win.GattCommunicationStatus.AccessDenied:
-                    throw new AccessViolationException("Access denied");
-                case Win.GattCommunicationStatus.ProtocolError:
-                    throw new FormatException($"Protocol error: {t.Result.ProtocolError}");
-                case Win.GattCommunicationStatus.Unreachable:
-                    // TODO: more specific exception
-                    throw new Exception("Unreachable");
-                }
-                throw new ArgumentException("Unknown status");
-            });
+            var result = await characteristic.ReadValueAsync();
+            switch (result.Status) {
+            case Win.GattCommunicationStatus.Success:
+                var data = new byte[result.Value.Length];
+                var reader = DataReader.FromBuffer(result.Value);
+                reader.ReadBytes(data);
+                return (Memory<byte>)data;
+            case Win.GattCommunicationStatus.AccessDenied:
+                throw new AccessViolationException("Access denied");
+            case Win.GattCommunicationStatus.ProtocolError:
+                throw new FormatException($"Protocol error: {result.ProtocolError}");
+            case Win.GattCommunicationStatus.Unreachable:
+                // TODO: more specific exception
+                throw new Exception("Unreachable");
+            }
+            throw new ArgumentException("Unknown status");
         }
 
-        Task _StartNotifyAsync()
+        async Task _StartNotifyAsync()
         {
-            return characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                Win.GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask()
-                .ContinueWith(t => {
-                    switch (t.Result) {
-                    case Win.GattCommunicationStatus.Success:
-                        break;
-                    case Win.GattCommunicationStatus.AccessDenied:
-                        throw new AccessViolationException();
-                    case Win.GattCommunicationStatus.ProtocolError:
-                    case Win.GattCommunicationStatus.Unreachable:
-                        throw new Exception();
-                    default:
-                        throw new InvalidOperationException();
-                    }
-                });
+            var result = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                Win.GattClientCharacteristicConfigurationDescriptorValue.Notify);
+            switch (result) {
+            case Win.GattCommunicationStatus.Success:
+                break;
+            case Win.GattCommunicationStatus.AccessDenied:
+                throw new AccessViolationException();
+            case Win.GattCommunicationStatus.ProtocolError:
+            case Win.GattCommunicationStatus.Unreachable:
+                throw new Exception();
+            default:
+                throw new InvalidOperationException();
+            }
         }
 
-        Task _StopNotifyAsync()
+        async Task _StopNotifyAsync()
         {
-            return characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                Win.GattClientCharacteristicConfigurationDescriptorValue.None).AsTask()
-                .ContinueWith(t => {
-                    switch (t.Result) {
-                    case Win.GattCommunicationStatus.Success:
-                        break;
-                    case Win.GattCommunicationStatus.AccessDenied:
-                        throw new AccessViolationException();
-                    case Win.GattCommunicationStatus.ProtocolError:
-                    case Win.GattCommunicationStatus.Unreachable:
-                        throw new Exception();
-                    default:
-                        throw new InvalidOperationException();
-                    }
-                });
+            var result = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                Win.GattClientCharacteristicConfigurationDescriptorValue.None);
+            switch (result) {
+            case Win.GattCommunicationStatus.Success:
+                break;
+            case Win.GattCommunicationStatus.AccessDenied:
+                throw new AccessViolationException();
+            case Win.GattCommunicationStatus.ProtocolError:
+            case Win.GattCommunicationStatus.Unreachable:
+                throw new Exception();
+            default:
+                throw new InvalidOperationException();
+            }
         }
         
         /// <inheritdoc/>

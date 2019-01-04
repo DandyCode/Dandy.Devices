@@ -41,13 +41,15 @@ namespace Dandy.Devices.BluetoothLE
 
         Guid _get_Uuid() => new Guid((string)properties["UUID"]);
 
-        async Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync()
+        async Task<IReadOnlyList<GattCharacteristic>> _GetCharacteristicsAsync(Guid uuid)
         {
             var manager = Connection.System.CreateProxy<IObjectManager>("org.bluez", ObjectPath.Root);
             var objs = await manager.GetManagedObjectsAsync();
             var characteristics = new List<GattCharacteristic>();
 
-            foreach (var characteristic in objs.Where(x => x.Key.StartsWith(proxy.ObjectPath) && x.Value.ContainsKey("org.bluez.GattCharacteristic1"))) {
+            foreach (var characteristic in objs.Where(x => x.Key.StartsWith(proxy.ObjectPath)
+                     && x.Value.TryGetValue("org.bluez.GattCharacteristic1", out var characteristic)
+                     && Guid.Parse((string)characteristic["UUID"]) == uuid)) {
                 characteristics.Add(await GattCharacteristic.CreateInstanceAsync(characteristic.Key));
             }
 

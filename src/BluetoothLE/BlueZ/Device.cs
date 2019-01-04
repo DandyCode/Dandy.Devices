@@ -14,6 +14,10 @@ namespace Dandy.Devices.BluetoothLE
         private IDisposable propertyWatcher;
         readonly private IDictionary<string, object> properties;
 
+        string _get_Name() => (string)properties["Alias"];
+
+        bool _get_IsConnected() => (bool)properties["Connected"];
+
         Device(ObjectPath path)
         {
             proxy = Connection.System.CreateProxy<IDevice1>("org.bluez", path);
@@ -36,8 +40,7 @@ namespace Dandy.Devices.BluetoothLE
             }
         }
 
-        /// <inheritdoc/>
-        public void Dispose()
+        void _Dispose()
         {
             propertyWatcher?.Dispose();
             proxy.DisconnectAsync().ContinueWith(x => {});
@@ -48,6 +51,17 @@ namespace Dandy.Devices.BluetoothLE
         static Task<Device> _FromIdAsync(string id)
         {
             return new Device(new ObjectPath(id)).InitAsync();
+        }
+
+        static async Task<Device> _FromAddressAsync(BluetoothAddress address)
+        {
+
+            var manager = Connection.System.CreateProxy<IObjectManager>("org.bluez", ObjectPath.Root);
+            var objs = await manager.GetManagedObjectsAsync();
+            var match = objs.First(x => x.Value.TryGetValue("org.bluez.Device1", out var props)
+                && props.TryGetValue("Address", out var addr)
+                && BluetoothAddress.Parse((string)addr) == address);
+            return await _FromIdAsync(match.Key.ToString());
         }
 
         async Task<IReadOnlyList<GattService>> _GetGattServicesAsync(Guid uuid)

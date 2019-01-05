@@ -54,7 +54,7 @@ namespace Dandy.Devices.BluetoothLE
             var result = await device.GetGattServicesForUuidAsync(uuid);
             switch (result.Status) {
             case Win.GattCommunicationStatus.Success:
-                return result.Services.Select(x => new GattService(x)).ToList().AsReadOnly();
+                return result.Services.Select(x => new GattService(this, x)).ToList().AsReadOnly();
             case Win.GattCommunicationStatus.AccessDenied:
                 throw new AccessViolationException("Access denied.");
             case Win.GattCommunicationStatus.ProtocolError:

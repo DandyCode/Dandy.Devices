@@ -10,15 +10,19 @@ namespace Dandy.Devices.BluetoothLE
 {
     partial class GattCharacteristic
     {
+        private readonly GattService service;
         private readonly Win.GattCharacteristic characteristic;
 
-        internal GattCharacteristic(Win.GattCharacteristic characteristic)
+        internal GattCharacteristic(GattService service, Win.GattCharacteristic characteristic)
         {
+            this.service = service ?? throw new ArgumentNullException(nameof(service));
             this.characteristic = characteristic ?? throw new ArgumentNullException(nameof(characteristic));
             characteristic.ValueChanged += Characteristic_ValueChanged;
         }
 
         Guid _get_Uuid() => characteristic.Uuid;
+
+        GattService _get_Service() => service;
 
         async Task _WriteValueAsync(ReadOnlyMemory<byte> data, GattWriteOption option)
         {

@@ -76,7 +76,7 @@ namespace Dandy.Devices.BluetoothLE
             var services = new List<GattService>();
 
             foreach (var service in objs.Where(x => x.Key.StartsWith(proxy.ObjectPath) && x.Value.ContainsKey("org.bluez.GattService1"))) {
-                services.Add(await GattService.CreateInstanceAsync(service.Key));
+                services.Add(await GattService.CreateInstanceAsync(this, service.Key));
             }
 
             return services.AsReadOnly();

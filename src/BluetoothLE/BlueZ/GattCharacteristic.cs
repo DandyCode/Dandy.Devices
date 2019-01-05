@@ -9,19 +9,21 @@ namespace Dandy.Devices.BluetoothLE
 {
     partial class GattCharacteristic
     {
+        private readonly GattService service;
         private readonly IGattCharacteristic1 proxy;
         private readonly IDictionary<string, object> properties;
         private IDisposable propertyWatcher;
 
-        GattCharacteristic(ObjectPath path)
+        GattCharacteristic(GattService service, ObjectPath path)
         {
+            this.service = service ?? throw new System.ArgumentNullException(nameof(service));
             proxy = Connection.System.CreateProxy<IGattCharacteristic1>("org.bluez", path);
             properties = new Dictionary<string, object>();
         }
 
-        internal static async Task<GattCharacteristic> CreateInstanceAsync(ObjectPath path)
+        internal static async Task<GattCharacteristic> CreateInstanceAsync(GattService service, ObjectPath path)
         {
-            var instance = new GattCharacteristic(path);
+            var instance = new GattCharacteristic(service, path);
             instance.propertyWatcher = await instance.proxy.WatchPropertiesAsync(x => instance.HandlePropertyChanges(x.Changed));
             instance.HandlePropertyChanges(await instance.proxy.GetAllAsync());
 
@@ -45,6 +47,8 @@ namespace Dandy.Devices.BluetoothLE
         }
 
         Guid _get_Uuid() => new Guid((string)properties["UUID"]);
+
+        GattService _get_Service() => service;
 
         [DllImport("c", SetLastError = true)]
         unsafe static extern IntPtr write(int fd, void *buf, UIntPtr count);

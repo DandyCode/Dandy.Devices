@@ -28,11 +28,7 @@ namespace Dandy.Devices.BluetoothLE
             return instance;
         }
 
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            watcher?.Dispose();
-        }
+        void _Dispose() => watcher?.Dispose();
 
         private void OnPropertiesChanged(PropertyChanges obj)
         {

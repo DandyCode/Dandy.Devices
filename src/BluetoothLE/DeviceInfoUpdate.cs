@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace Dandy.Devices.BluetoothLE
 {
+    /// <summary>
+    /// Class containing updated information about a Bluetooth Low Energy device.
+    /// </summary>
     public sealed partial class DeviceInfoUpdate
     {
         /// <summary>

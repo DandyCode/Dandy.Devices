@@ -29,10 +29,21 @@ namespace Dandy.Devices.BluetoothLE
         /// </summary>
         public Task<Memory<byte>> ReadValueAsync() => _ReadValueAsync();
 
+        /// <summary>
+        /// Enables notifications for this characteristic.
+        /// </summary>
         public Task StartNotifyAsync() => _StartNotifyAsync();
 
+        /// <summary>
+        /// Disables notifications for this characteristic.
+        /// </summary>
         public Task StopNotifyAsync() => _StopNotifyAsync();
 
+        /// <summary>
+        /// Event that fires when this characteristic's value has changed.
+        /// This event will on occur unless <see cref="StartNotifyAsync"/>
+        /// has been called.
+        /// </summary>
         public event EventHandler<GattValueChangedEventArgs> ValueChanged;
 
         private void OnValueChanged(Memory<byte> value)

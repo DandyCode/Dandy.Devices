@@ -37,9 +37,6 @@ namespace Dandy.Devices.BluetoothLE
             }
         }
 
-        public void Dispose()
-        {
-            service.Dispose();
-        }
+        void _Dispose() => service.Dispose();
     }
 }

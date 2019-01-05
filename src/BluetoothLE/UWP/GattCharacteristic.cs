@@ -11,7 +11,7 @@ namespace Dandy.Devices.BluetoothLE
     partial class GattCharacteristic
     {
         private readonly Win.GattCharacteristic characteristic;
-        
+
         internal GattCharacteristic(Win.GattCharacteristic characteristic)
         {
             this.characteristic = characteristic ?? throw new ArgumentNullException(nameof(characteristic));
@@ -35,7 +35,7 @@ namespace Dandy.Devices.BluetoothLE
                     throw new Exception();
                 }
             case GattWriteOption.WriteWithoutResponse:
-                var result2 = await characteristic.WriteValueAsync(writer.DetachBuffer());
+                var result2 = await characteristic.WriteValueAsync(writer.DetachBuffer(), Win.GattWriteOption.WriteWithoutResponse);
                 switch (result2) {
                 case Win.GattCommunicationStatus.Success:
                     return;
@@ -100,7 +100,7 @@ namespace Dandy.Devices.BluetoothLE
                 throw new InvalidOperationException();
             }
         }
-        
+
         /// <inheritdoc/>
         public void Dispose()
         {

@@ -2,11 +2,11 @@
 {
     public class AdvertisementWatcherStoppedEventArgs
     {
-        private AdvertisementWatcherError error;
+        public AdvertisementWatcherError Error { get; }
 
         public AdvertisementWatcherStoppedEventArgs(AdvertisementWatcherError error)
         {
-            this.error = error;
+            Error = error;
         }
     }
 }

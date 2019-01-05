@@ -22,12 +22,13 @@
 
   <ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))">
     <Compile Include="UWP/*.cs" />
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.3.0" />
     <Reference Include="System.Runtime.WindowsRuntime">
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5.1\System.Runtime.WindowsRuntime.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="System.RuntimeInteropServices..WindowsRuntime">
-      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5.1\System.Runtime.InteropServices.WindowsRuntime.dll</HintPath>
+    <Reference Include="System.RuntimeInteropServices.WindowsRuntime">
+      <HintPath>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.InteropServices.WindowsRuntime.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Windows">

@@ -37,4 +37,11 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">
+    <Compile Include="Xamarin/*.cs" />
+    <Reference Include="Xamarin.Mac">
+      <HintPath>/Library/Frameworks/Xamarin.Mac.framework/Versions/Current//lib/x86_64/full/Xamarin.Mac.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

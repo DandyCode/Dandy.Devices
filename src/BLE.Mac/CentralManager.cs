@@ -128,7 +128,6 @@ namespace Dandy.Devices.BLE.Mac
     internal sealed class CentralManagerDelegate : CBCentralManagerDelegate
     {
         private readonly BehaviorSubject<CBCentralManagerState> updatedStateSubject = new(CBCentralManagerState.Unknown);
-        private TaskCompletionSource<CBPeripheral[]>? retrievedPeripheralsCompletion;
         private readonly Subject<AdvertisementData> discoveredPeripheralSubject = new();
 
         public IObservable<CBCentralManagerState> UpdatedStateObservable => updatedStateSubject.AsObservable();
@@ -137,34 +136,6 @@ namespace Dandy.Devices.BLE.Mac
         public override void UpdatedState(CBCentralManager central)
         {
             updatedStateSubject.OnNext(central.State);
-        }
-
-        public Task<CBPeripheral[]> RetrievePeripheralsAsync(CBCentralManager central)
-        {
-            if (central.Delegate != this) {
-                throw new ArgumentException("central is not attached to delegate", nameof(central));
-            }
-
-            if (retrievedPeripheralsCompletion != null) {
-                throw new InvalidOperationException("already in progress");
-            }
-
-            retrievedPeripheralsCompletion = new();
-            central.RetrievePeripheralsWithIdentifiers();
-            return retrievedPeripheralsCompletion.Task;
-
-        }
-
-        public override void RetrievedPeripherals(CBCentralManager central, CBPeripheral[] peripherals)
-        {
-            var completion = retrievedPeripheralsCompletion;
-
-            if (completion == null) {
-                return;
-            }
-
-            completion.SetResult(peripherals);
-            retrievedPeripheralsCompletion = null;
         }
 
         public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)

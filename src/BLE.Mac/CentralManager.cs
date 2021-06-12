@@ -35,7 +35,7 @@ namespace Dandy.Devices.BLE.Mac
         {
             var instance = new CentralManager();
 
-            var state = await instance.@delegate.StateObservable.FirstAsync(
+            var state = await instance.@delegate.UpdatedStateObservable.FirstAsync(
                 x => x != CBCentralManagerState.Unknown && x != CBCentralManagerState.Resetting
             ).GetAwaiter();
 
@@ -101,7 +101,7 @@ namespace Dandy.Devices.BLE.Mac
                 CBCentralManager.ScanOptionAllowDuplicatesKey, filterDuplicates
             );
 
-            var delegateSubscription = @delegate.Subscribe(observer);
+            var delegateSubscription = @delegate.DiscoveredPeripheralsObservable.Subscribe(observer);
 
             central.ScanForPeripherals(cbUuids, options);
             await isScanningObservable.FirstAsync(x => x).GetAwaiter();
@@ -127,16 +127,16 @@ namespace Dandy.Devices.BLE.Mac
 
     internal sealed class CentralManagerDelegate : CBCentralManagerDelegate
     {
-        private readonly BehaviorSubject<CBCentralManagerState> stateSubject = new(CBCentralManagerState.Unknown);
+        private readonly BehaviorSubject<CBCentralManagerState> updatedStateSubject = new(CBCentralManagerState.Unknown);
         private TaskCompletionSource<CBPeripheral[]>? retrievedPeripheralsCompletion;
-        private readonly List<IObserver<AdvertisementData>> discoveredObservers = new();
-        private readonly object discoveredObserversLock = new();
+        private readonly Subject<AdvertisementData> discoveredPeripheralSubject = new();
 
-        public IObservable<CBCentralManagerState> StateObservable => stateSubject.AsObservable();
+        public IObservable<CBCentralManagerState> UpdatedStateObservable => updatedStateSubject.AsObservable();
+        public IObservable<AdvertisementData> DiscoveredPeripheralsObservable => discoveredPeripheralSubject.AsObservable();
 
         public override void UpdatedState(CBCentralManager central)
         {
-            stateSubject.OnNext(central.State);
+            updatedStateSubject.OnNext(central.State);
         }
 
         public Task<CBPeripheral[]> RetrievePeripheralsAsync(CBCentralManager central)
@@ -167,31 +167,9 @@ namespace Dandy.Devices.BLE.Mac
             retrievedPeripheralsCompletion = null;
         }
 
-        private record Unsubscriber(CentralManagerDelegate @delegate, IObserver<AdvertisementData> observer) : IDisposable
-        {
-            public void Dispose()
-            {
-                lock (@delegate.discoveredObserversLock) {
-                    @delegate.discoveredObservers.Remove(observer);
-                }
-            }
-        }
-
-        public IDisposable Subscribe(IObserver<AdvertisementData> observer)
-        {
-            lock (discoveredObserversLock) {
-                discoveredObservers.Add(observer);
-                return new Unsubscriber(this, observer);
-            }
-        }
-
         public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)
         {
-            lock (discoveredObserversLock) {
-                foreach (var observer in discoveredObservers) {
-                    observer.OnNext(new AdvertisementData(advertisementData, RSSI));
-                }
-            }
+            discoveredPeripheralSubject.OnNext(new AdvertisementData(advertisementData, RSSI));
         }
     }
 }

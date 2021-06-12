@@ -35,27 +35,17 @@ namespace Dandy.Devices.BLE.Mac
         {
             var instance = new CentralManager();
 
-            for (; ; ) {
-                var state = await instance.@delegate.WaitForValidStateAsync(instance.central).ConfigureAwait(false);
+            var state = await instance.@delegate.StateObservable.FirstAsync(
+                x => x != CBCentralManagerState.Unknown && x != CBCentralManagerState.Resetting
+            ).GetAwaiter();
 
-                switch (state) {
-                case CBCentralManagerState.Resetting:
-                    // wait for reset if needed
-                    continue;
-                case CBCentralManagerState.Unsupported:
-                    throw new Exception("bluetooth unsupported");
-                case CBCentralManagerState.Unauthorized:
-                    throw new Exception("bluetooth unauthorized");
-                case CBCentralManagerState.PoweredOff:
-                    throw new Exception("bluetooth powered off");
-                case CBCentralManagerState.PoweredOn:
-                    return instance;
-                case CBCentralManagerState.Unknown:
-                    // should never be returned by WaitForValidStateAsync
-                    break;
-                }
-                throw new Exception("unknown state");
-            }
+            return state switch {
+                CBCentralManagerState.Unsupported => throw new Exception("bluetooth unsupported"),
+                CBCentralManagerState.Unauthorized => throw new Exception("bluetooth unauthorized"),
+                CBCentralManagerState.PoweredOff => throw new Exception("bluetooth powered off"),
+                CBCentralManagerState.PoweredOn => instance,
+                _ => throw new Exception("unknown state"),
+            };
         }
 
         public IEnumerable<Peripheral> GetKnownPeripherals(IEnumerable<string> ids)
@@ -137,47 +127,16 @@ namespace Dandy.Devices.BLE.Mac
 
     internal sealed class CentralManagerDelegate : CBCentralManagerDelegate
     {
-        private TaskCompletionSource<CBCentralManagerState>? updatedStateCompletion;
+        private readonly BehaviorSubject<CBCentralManagerState> stateSubject = new(CBCentralManagerState.Unknown);
         private TaskCompletionSource<CBPeripheral[]>? retrievedPeripheralsCompletion;
         private readonly List<IObserver<AdvertisementData>> discoveredObservers = new();
         private readonly object discoveredObserversLock = new();
 
-        /// <summary>
-        /// Waits for the central manager state to be something other than Unknown.
-        /// </summary>
-        /// <param name="central">A central manager object that is connected to this delegate.</param>
-        /// <returns>The current state.</returns>
-        public Task<CBCentralManagerState> WaitForValidStateAsync(CBCentralManager central)
-        {
-            if (central.Delegate != this) {
-                throw new ArgumentException("central is not attached to delegate", nameof(central));
-            }
-
-            if (updatedStateCompletion != null) {
-                throw new InvalidOperationException("already in progress");
-            }
-
-            updatedStateCompletion = new();
-
-            if (central.State != CBCentralManagerState.Unknown) {
-                updatedStateCompletion = null;
-                return Task.FromResult(central.State);
-            }
-
-            return updatedStateCompletion.Task;
-        }
-
+        public IObservable<CBCentralManagerState> StateObservable => stateSubject.AsObservable();
 
         public override void UpdatedState(CBCentralManager central)
         {
-            var completion = updatedStateCompletion;
-
-            if (completion == null) {
-                return;
-            }
-
-            completion.SetResult(central.State);
-            updatedStateCompletion = null;
+            stateSubject.OnNext(central.State);
         }
 
         public Task<CBPeripheral[]> RetrievePeripheralsAsync(CBCentralManager central)

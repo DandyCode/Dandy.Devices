@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using CoreBluetooth;
 using CoreFoundation;
@@ -10,15 +12,23 @@ using Foundation;
 
 namespace Dandy.Devices.BLE.Mac
 {
-    public sealed class CentralManager
+    public sealed class CentralManager : IAsyncDisposable
     {
         readonly CentralManagerDelegate @delegate;
         readonly CBCentralManager central;
+        readonly IObservable<bool> isScanningObservable;
+        readonly IDisposable isScanningObserver;
 
         private CentralManager()
         {
             @delegate = new CentralManagerDelegate();
             central = new CBCentralManager(@delegate, new DispatchQueue("Dandy.Devices.BLE.Mac"));
+            var isScanningSubject = new BehaviorSubject<bool>(central.IsScanning);
+            isScanningObserver = central.AddObserver("isScanning", NSKeyValueObservingOptions.New, change => {
+                var value = ((NSNumber)change.NewValue).BoolValue;
+                isScanningSubject.OnNext(value);
+            });
+            isScanningObservable = isScanningSubject.AsObservable();
         }
 
         public static async Task<CentralManager> NewAsync()
@@ -74,23 +84,14 @@ namespace Dandy.Devices.BLE.Mac
 
         record ScanStopper(
             CBCentralManager central,
-            IObserver<AdvertisementData> observer,
+            IObservable<bool> isScanningObservable,
             IDisposable subscription) : IAsyncDisposable
         {
             public async Task DisposeAsync()
             {
+                central.StopScan();
+                await isScanningObservable.FirstAsync(x => !x).GetAwaiter();
                 subscription.Dispose();
-
-                if (!central.IsScanning) {
-                    return;
-                }
-
-                var completion = new TaskCompletionSource<object?>();
-
-                using (central.AddObserver("isScanning", default, _ => completion.SetResult(default))) {
-                    central.StopScan();
-                    await completion.Task.ConfigureAwait(false);
-                }
             }
         }
 
@@ -110,26 +111,27 @@ namespace Dandy.Devices.BLE.Mac
                 CBCentralManager.ScanOptionAllowDuplicatesKey, filterDuplicates
             );
 
-            var subscription = @delegate.Subscribe(observer);
+            var delegateSubscription = @delegate.Subscribe(observer);
 
-            var unsubscriber = default(IDisposable);
-            unsubscriber = central.AddObserver("isScanning", NSKeyValueObservingOptions.New, changed => {
-                if (!((NSNumber)changed.NewValue).BoolValue) {
-                    observer.OnCompleted();
-                    unsubscriber?.Dispose();
-                    unsubscriber = null;
-                }
+            central.ScanForPeripherals(cbUuids, options);
+            await isScanningObservable.FirstAsync(x => x).GetAwaiter();
+
+            // When isScanning transitions to false, observer is complete. This
+            // may occur _before_ scanning is stopped via the ScanStopper, e.g.
+            // if Bluetooth is turned off while scanning.
+            var isScanningSubscription = isScanningObservable.FirstAsync(x => !x).Subscribe(_ => {
+                delegateSubscription.Dispose();
+                observer.OnCompleted();
             });
-            // FIXME: unsubscriber is GCed here!
 
-            var source = new TaskCompletionSource<object?>();
+            return new ScanStopper(central, isScanningObservable, isScanningSubscription);
+        }
 
-            using (central.AddObserver("isScanning", default, _ => source.SetResult(default))) {
-                central.ScanForPeripherals(cbUuids, options);
-                await source.Task.ConfigureAwait(false);
-            }
+        public Task DisposeAsync()
+        {
+            isScanningObserver.Dispose();
 
-            return new ScanStopper(central, observer, subscription);
+            return Task.CompletedTask;
         }
     }
 

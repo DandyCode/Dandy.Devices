@@ -32,7 +32,7 @@ namespace WatchBLEAdvertisements.Mac
             typeof(Runtime).GetMethod("RegisterAssemblies", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
 
             Console.WriteLine("Hello World!");
-            var central = await CentralManager.NewAsync();
+            await using var central = await CentralManager.NewAsync();
 
             var advertisementObserver = Observer.Create<AdvertisementData>(
                 data => Console.WriteLine(data),

@@ -8,19 +8,24 @@ using CoreBluetooth;
 using Foundation;
 
 using static System.Buffers.Binary.BinaryPrimitives;
+using CBAdvertisementData = CoreBluetooth.AdvertisementData;
 
 namespace Dandy.Devices.BLE.Mac
 {
     public class AdvertisementData
     {
-        private readonly CoreBluetooth.AdvertisementData advertisementData;
-        readonly NSNumber rssi;
+        private readonly CBPeripheral peripheral;
+        private readonly CBAdvertisementData advertisementData;
+        private readonly NSNumber rssi;
 
-        internal AdvertisementData(NSDictionary advertisementData, NSNumber rssi)
+        internal AdvertisementData(CBPeripheral peripheral, NSDictionary advertisementData, NSNumber rssi)
         {
-            this.advertisementData = new CoreBluetooth.AdvertisementData(advertisementData);
+            this.peripheral = peripheral;
+            this.advertisementData = new(advertisementData);
             this.rssi = rssi;
         }
+
+        public string Id => peripheral.Identifier.AsString();
 
         public string? LocalName => advertisementData.LocalName;
 
@@ -35,11 +40,13 @@ namespace Dandy.Devices.BLE.Mac
 
         public short? TxPower => advertisementData.TxPowerLevel?.Int16Value;
 
-        public short RSSI => rssi.Int16Value;
+        public short Rssi => rssi.Int16Value;
 
         public override string ToString()
         {
             var items = new List<string>();
+
+            items.Add($"ID: {Id}");
 
             if (LocalName is not null) {
                 items.Add($"LocalName: {LocalName}");
@@ -61,7 +68,7 @@ namespace Dandy.Devices.BLE.Mac
                 items.Add($"TxPower: {TxPower}");
             }
 
-            items.Add($"RSSI: {RSSI}");
+            items.Add($"RSSI: {Rssi}");
 
             return string.Join("; ", items);
         }

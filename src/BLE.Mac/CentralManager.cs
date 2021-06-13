@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using CoreBluetooth;
 using CoreFoundation;
@@ -22,7 +23,7 @@ namespace Dandy.Devices.BLE.Mac
         private CentralManager()
         {
             @delegate = new CentralManagerDelegate();
-            central = new CBCentralManager(@delegate, new DispatchQueue("Dandy.Devices.BLE.Mac"));
+            central = new CBCentralManager(@delegate, new DispatchQueue("Dandy.Devices.BLE.Mac.CentralManager"));
             var isScanningSubject = new BehaviorSubject<bool>(central.IsScanning);
             isScanningObserver = central.AddObserver("isScanning", NSKeyValueObservingOptions.New, change => {
                 var value = ((NSNumber)change.NewValue).BoolValue;
@@ -48,23 +49,54 @@ namespace Dandy.Devices.BLE.Mac
             };
         }
 
-        public IEnumerable<Peripheral> GetKnownPeripherals(IEnumerable<string> ids)
+        /// <summary>
+        /// Tries to connect to a BLE device.
+        /// </summary>
+        /// <param name="id">The OS-specific ID of the device (from <see cref="AdvertisementData"/>>.</param>
+        /// <param name="token">An optional cancellation token.</param>
+        /// <returns>The connected peripheral.</returns>
+        /// <remarks>
+        /// It is highly recommended to supply a cancellation token since this
+        /// method will never time out.
+        /// </remarks>
+        public async Task<Peripheral> ConnectAsync(string id, CancellationToken? token = null)
         {
-            var uuids = ids.Select(x => new NSUuid(x)).ToArray();
-            return central.RetrievePeripheralsWithIdentifiers(uuids)
-                .Select(p => new Peripheral(central, @delegate, p));
-        }
+            var cbPeripheral = central.RetrievePeripheralsWithIdentifiers(new NSUuid(id)).Single();
+            var peripheral = new Peripheral(cbPeripheral);
 
-        public IEnumerable<Peripheral> GetKnownPeripherals(params string[] ids)
-        {
-            return GetKnownPeripherals(ids ?? Enumerable.Empty<string>());
+            var source = new TaskCompletionSource<Peripheral>();
+            using var registration = token?.Register(() => source.TrySetCanceled());
+
+            using var success = @delegate.ConnectedPeripheralObservable
+                .FirstAsync(x => x.Identifier == cbPeripheral.Identifier)
+                .Subscribe(x => source.TrySetResult(peripheral));
+
+            using var failure = @delegate.FailedToConnectPeripheralObservable
+                .FirstAsync(x => x.peripheral.Identifier == cbPeripheral.Identifier)
+                .Subscribe(x => source.TrySetException(new NSErrorException(x.error)));
+
+            central.ConnectPeripheral(cbPeripheral);
+
+            try {
+                return await source.Task.ConfigureAwait(false);
+            } catch (TaskCanceledException) {
+                central.CancelPeripheralConnection(cbPeripheral);
+
+                // The cancellation triggers a disconnect event even if the peripheral
+                // was not connected.
+                await @delegate.DisconnectedPeripheralObservable
+                    .FirstAsync(x => x.peripheral.Identifier == cbPeripheral.Identifier)
+                    .GetAwaiter();
+
+                throw;
+            }
         }
 
         public IEnumerable<Peripheral> GetConnectedPeripherals(IEnumerable<Guid> uuids)
         {
             var cbUuids = uuids.Select(x => CBUUID.FromString(x.ToString())).ToArray();
             var peripherals = central.RetrieveConnectedPeripherals(cbUuids);
-            return peripherals.Select(p => new Peripheral(central, @delegate, p));
+            return peripherals.Select(p => new Peripheral(p));
         }
 
         public IEnumerable<Peripheral> GetConnectedPeripherals(params Guid[] uuids)
@@ -101,7 +133,8 @@ namespace Dandy.Devices.BLE.Mac
                 CBCentralManager.ScanOptionAllowDuplicatesKey, filterDuplicates
             );
 
-            var delegateSubscription = @delegate.DiscoveredPeripheralsObservable.Subscribe(observer);
+            var delegateSubscription = @delegate.DiscoveredPeripheralsObservable
+                .Select(x => new AdvertisementData(x.peripheral, x.advertisementData, x.rssi)).Subscribe(observer);
 
             central.ScanForPeripherals(cbUuids, options);
             await isScanningObservable.FirstAsync(x => x).GetAwaiter();
@@ -127,11 +160,22 @@ namespace Dandy.Devices.BLE.Mac
 
     internal sealed class CentralManagerDelegate : CBCentralManagerDelegate
     {
-        private readonly BehaviorSubject<CBCentralManagerState> updatedStateSubject = new(CBCentralManagerState.Unknown);
-        private readonly Subject<AdvertisementData> discoveredPeripheralSubject = new();
+        private readonly BehaviorSubject<CBCentralManagerState> updatedStateSubject =
+            new(CBCentralManagerState.Unknown);
+        private readonly Subject<(CBPeripheral, NSDictionary, NSNumber)> discoveredPeripheralSubject = new();
+        private readonly Subject<CBPeripheral> connectedPeripheralSubject = new();
+        private readonly Subject<(CBPeripheral, NSError?)> failedToConnectPeripheralSubject = new();
+        private readonly Subject<(CBPeripheral, NSError?)> disconnectedPeripheralSubject = new();
 
-        public IObservable<CBCentralManagerState> UpdatedStateObservable => updatedStateSubject.AsObservable();
-        public IObservable<AdvertisementData> DiscoveredPeripheralsObservable => discoveredPeripheralSubject.AsObservable();
+        public IObservable<CBCentralManagerState> UpdatedStateObservable =>
+            updatedStateSubject.AsObservable();
+        public IObservable<(CBPeripheral peripheral, NSDictionary advertisementData, NSNumber rssi)>
+            DiscoveredPeripheralsObservable => discoveredPeripheralSubject.AsObservable();
+        public IObservable<CBPeripheral> ConnectedPeripheralObservable => connectedPeripheralSubject.AsObservable();
+        public IObservable<(CBPeripheral peripheral, NSError? error)> FailedToConnectPeripheralObservable =>
+            failedToConnectPeripheralSubject.AsObservable();
+        public IObservable<(CBPeripheral peripheral, NSError? error)> DisconnectedPeripheralObservable =>
+            disconnectedPeripheralSubject.AsObservable();
 
         public override void UpdatedState(CBCentralManager central)
         {
@@ -140,7 +184,22 @@ namespace Dandy.Devices.BLE.Mac
 
         public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)
         {
-            discoveredPeripheralSubject.OnNext(new AdvertisementData(advertisementData, RSSI));
+            discoveredPeripheralSubject.OnNext((peripheral, advertisementData, RSSI));
+        }
+
+        public override void ConnectedPeripheral(CBCentralManager central, CBPeripheral peripheral)
+        {
+            connectedPeripheralSubject.OnNext(peripheral);
+        }
+
+        public override void FailedToConnectPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError? error)
+        {
+            failedToConnectPeripheralSubject.OnNext((peripheral, error));
+        }
+
+        public override void DisconnectedPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError? error)
+        {
+            disconnectedPeripheralSubject.OnNext((peripheral, error));
         }
     }
 }

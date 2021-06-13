@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Dandy.Devices.BLE.Mac;
 using ObjCRuntime;
 using System.Reactive;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace WatchBLEAdvertisements.Mac
 {
@@ -34,8 +37,13 @@ namespace WatchBLEAdvertisements.Mac
             Console.WriteLine("Hello World!");
             await using var central = await CentralManager.NewAsync();
 
+            var ids = new HashSet<string>();
+
             var advertisementObserver = Observer.Create<AdvertisementData>(
-                data => Console.WriteLine(data),
+                data => {
+                    ids.Add(data.Id);
+                    Console.WriteLine(data);
+                },
                 () => Console.WriteLine("observer complete"));
 
             Console.WriteLine("scanning...");
@@ -43,14 +51,13 @@ namespace WatchBLEAdvertisements.Mac
                 await Task.Delay(10000);
             }
 
-            foreach (var p in central.GetKnownPeripherals()) {
-                Console.Write("Known: ");
-                Console.WriteLine(p);
-            }
-
-            foreach (var p in central.GetConnectedPeripherals()) {
-                Console.Write("Connected: ");
-                Console.WriteLine(p);
+            Console.WriteLine("connecting...");
+            await using (var peripherial = await central.ConnectAsync(ids.First(), new CancellationTokenSource(10000).Token)) {
+                Console.WriteLine("connected");
+                foreach (var p in central.GetConnectedPeripherals()) {
+                    Console.Write("Connected: ");
+                    Console.WriteLine(p);
+                }
             }
 
             Console.WriteLine("done.");

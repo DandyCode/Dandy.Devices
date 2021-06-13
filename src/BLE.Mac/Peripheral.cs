@@ -1,25 +1,28 @@
 #nullable enable
 
 using System;
+using System.Threading.Tasks;
 using CoreBluetooth;
 
 namespace Dandy.Devices.BLE.Mac
 {
-    public class Peripheral
+    public class Peripheral: IAsyncDisposable
     {
-        readonly CBCentralManager central;
-        readonly CentralManagerDelegate centralDelegate;
         readonly CBPeripheral peripheral;
 
-        internal Peripheral(CBCentralManager central, CentralManagerDelegate centralDelegate, CBPeripheral peripheral)
+        internal Peripheral(CBPeripheral peripheral)
         {
-            this.central = central;
-            this.centralDelegate = centralDelegate;
             this.peripheral = peripheral;
         }
 
         public string? Name => peripheral.Name;
 
         public string Id => peripheral.Identifier.AsString();
+
+        public Task DisposeAsync()
+        {
+            // TODO: disconnect
+            return Task.CompletedTask;
+        }
     }
 }

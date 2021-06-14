@@ -59,6 +59,12 @@
     <Reference Include="System.Reactive">
       <HintPath>..\..\packages\System.Reactive.5.0.0\lib\net472\System.Reactive.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.5.0.0\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CentralManager.cs" />
@@ -67,9 +73,23 @@
     <Compile Include="IsExternalInit\IsExternalInit.cs" />
     <Compile Include="AdvertisementData.cs" />
     <Compile Include="Uuid.cs" />
+    <Compile Include="GattService.cs" />
+    <Compile Include="GattCharacteristic.cs" />
+    <Compile Include="GattDescriptor.cs" />
+    <Compile Include="Marshal.cs" />
+    <Compile Include="WellKnownAttributes.cs">
+      <DependentUpon>WellKnownAttributes.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Services.json" />
+    <None Include="WellKnownAttributes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>WellKnownAttributes.cs</LastGenOutput>
+    </None>
+    <None Include="Characteristics.json" />
+    <None Include="Descriptors.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\IsExternalInit.1.0.0\build\net40\IsExternalInit.targets" Condition="Exists('..\..\packages\IsExternalInit.1.0.0\build\net40\IsExternalInit.targets')" />

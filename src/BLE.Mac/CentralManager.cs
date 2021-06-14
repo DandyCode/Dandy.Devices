@@ -38,7 +38,7 @@ namespace Dandy.Devices.BLE.Mac
 
             var state = await instance.@delegate.UpdatedStateObservable.FirstAsync(
                 x => x != CBCentralManagerState.Unknown && x != CBCentralManagerState.Resetting
-            ).GetAwaiter();
+            );
 
             return state switch {
                 CBCentralManagerState.Unsupported => throw new Exception("bluetooth unsupported"),
@@ -59,13 +59,13 @@ namespace Dandy.Devices.BLE.Mac
         /// It is highly recommended to supply a cancellation token since this
         /// method will never time out.
         /// </remarks>
-        public async Task<Peripheral> ConnectAsync(string id, CancellationToken? token = null)
+        public async Task<Peripheral> ConnectAsync(string id, CancellationToken token = default)
         {
             var cbPeripheral = central.RetrievePeripheralsWithIdentifiers(new NSUuid(id)).Single();
-            var peripheral = new Peripheral(cbPeripheral);
+            var peripheral = new Peripheral(central, @delegate, cbPeripheral);
 
             var source = new TaskCompletionSource<Peripheral>();
-            using var registration = token?.Register(() => source.TrySetCanceled());
+            using var registration = token.Register(() => source.TrySetCanceled(token));
 
             using var success = @delegate.ConnectedPeripheralObservable
                 .FirstAsync(x => x.Identifier == cbPeripheral.Identifier)
@@ -80,13 +80,14 @@ namespace Dandy.Devices.BLE.Mac
             try {
                 return await source.Task.ConfigureAwait(false);
             } catch (TaskCanceledException) {
-                central.CancelPeripheralConnection(cbPeripheral);
-
                 // The cancellation triggers a disconnect event even if the peripheral
                 // was not connected.
-                await @delegate.DisconnectedPeripheralObservable
+                var awaiter = @delegate.DisconnectedPeripheralObservable
                     .FirstAsync(x => x.peripheral.Identifier == cbPeripheral.Identifier)
                     .GetAwaiter();
+
+                central.CancelPeripheralConnection(cbPeripheral);
+                await awaiter;
 
                 throw;
             }
@@ -96,7 +97,7 @@ namespace Dandy.Devices.BLE.Mac
         {
             var cbUuids = uuids.Select(x => CBUUID.FromString(x.ToString())).ToArray();
             var peripherals = central.RetrieveConnectedPeripherals(cbUuids);
-            return peripherals.Select(p => new Peripheral(p));
+            return peripherals.Select(p => new Peripheral(central, @delegate, p));
         }
 
         public IEnumerable<Peripheral> GetConnectedPeripherals(params Guid[] uuids)

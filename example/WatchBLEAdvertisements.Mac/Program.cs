@@ -23,6 +23,7 @@ namespace WatchBLEAdvertisements.Mac
         static Guid lpw3Uuid(ushort uuid) => Uuid.From16(uuid, lwp3UuidBase);
         static Guid pybricksUuid(ushort uuid) => Uuid.From16(uuid, pybricksUuidBase);
 
+        static readonly Guid wedoAdvertisementDataServiceUuid = Uuid.From16(0x1523);
         static readonly Guid wedoHubServiceUuid = wedoUuid(0x1523);
         static readonly Guid wedoHubNameCharacteristicUuid = wedoUuid(0x1524);
         static readonly Guid wedoHubButtonCharacteristicUuid = wedoUuid(0x1526);
@@ -51,6 +52,7 @@ namespace WatchBLEAdvertisements.Mac
             .Remove(wedoHubServiceUuid) // conflicts with com.nordicsemi.service.led_and_button
             .AddRange(
                 new Dictionary<Guid, string> {
+                    { wedoAdvertisementDataServiceUuid, "WeDo 2.0 Advertisement Manufacturer Data" },
                     { wedoHubServiceUuid, "WeDo 2.0 Hub Service" },
                     { wedoInputServiceUuid, "WeDo 2.0 Input Service" },
                     { lwp3HubServiceUuid, "LWP3 Hub Service" },

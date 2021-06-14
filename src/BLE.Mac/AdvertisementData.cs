@@ -33,7 +33,11 @@ namespace Dandy.Devices.BLE.Mac
             ParseManufacturerData(advertisementData.ManufacturerData);
 
         public IImmutableDictionary<Guid, ImmutableArray<byte>>? ServiceData =>
-            ParseServiceData(advertisementData.ServiceData);
+            // https://github.com/xamarin/xamarin-macios/issues/11917
+            // The strong dictionary is returning null even when there is
+            // service data, so we have added a workaround to get the service
+            // data from the underlying dictionary.
+            ParseServiceData(advertisementData.ServiceData ?? WorkaroundNullServiceData(advertisementData));
 
         public IImmutableSet<Guid>? ServiceUuids =>
             ParseServiceUuids(advertisementData.ServiceUuids, advertisementData.OverflowServiceUuids);
@@ -97,7 +101,7 @@ namespace Dandy.Devices.BLE.Mac
             var builder = ImmutableDictionary.CreateBuilder<Guid, ImmutableArray<byte>>();
 
             foreach (var item in serviceData) {
-                var guid = new Guid(((CBUUID)item.Key).Uuid);
+                var guid = Marshal.CBUuidToGuid((CBUUID)item.Key);
                 var nsdata = (NSData)item.Value;
                 var span = new ReadOnlySpan<byte>((void*)nsdata.Bytes, (int)nsdata.Length);
                 var data = ImmutableArrayFromSpan(span);
@@ -105,6 +109,15 @@ namespace Dandy.Devices.BLE.Mac
             }
 
             return builder.ToImmutable();
+        }
+
+        private static NSDictionary? WorkaroundNullServiceData(CBAdvertisementData advertisingData)
+        {
+            if (advertisingData.Dictionary.TryGetValue(CBAdvertisement.DataServiceDataKey, out var serviceData)) {
+                return (NSDictionary)serviceData;
+            }
+
+            return null;
         }
 
         private static IImmutableSet<Guid>? ParseServiceUuids(CBUUID[]? serviceUuids, CBUUID[]? overflowServiceUuids)

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Enumeration;
 using Win = Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace Dandy.Devices.BluetoothLE

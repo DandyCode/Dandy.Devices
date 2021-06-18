@@ -132,12 +132,6 @@
       <Version>6.1.5</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\BluetoothLE\BluetoothLE.UWP.csproj">
-      <Project>{433f9276-ec82-4e58-a4a3-f1920296fa0e}</Project>
-      <Name>BluetoothLE.UWP</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

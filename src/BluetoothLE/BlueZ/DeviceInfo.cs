@@ -14,25 +14,6 @@ namespace Dandy.Devices.BluetoothLE
 
         private readonly IDictionary<string, object> properties;
 
-        static DeviceWatcher _CreateWatcher()
-        {
-            return new DeviceWatcher();
-        }
-
-        static Task<IEnumerable<DeviceInfo>> _FindAllAsync()
-        {
-            var completion = new TaskCompletionSource<IEnumerable<DeviceInfo>>();
-            var list = new List<DeviceInfo>();
-
-            var watcher = new DeviceWatcher();
-            watcher.Added += (s, e) => list.Add(e);
-            watcher.EnumerationCompleted += (s, e) => watcher.Stop();
-            watcher.Stopped += (s, e) => completion.SetResult(list);
-            watcher.Start();
-
-            return completion.Task;
-        }
-
         internal DeviceInfo(ObjectPath @object, string @interface, IDictionary<string, object> properties)
         {
             ObjectPath = @object;

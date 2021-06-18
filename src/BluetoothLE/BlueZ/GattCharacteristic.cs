@@ -39,7 +39,7 @@ namespace Dandy.Devices.BluetoothLE
             foreach (var p in changes) {
                 properties[p.Key] = p.Value;
                 if (p.Key == "Value") {
-                    _ValueChanged?.Invoke(this, new GattValueChangedEventArgs((byte[])p.Value));
+                   OnValueChanged((byte[])p.Value);
                 }
             }
         }
@@ -100,13 +100,8 @@ namespace Dandy.Devices.BluetoothLE
 
         Task<Memory<byte>> _ReadValueAsync() => proxy.ReadValueAsync(new Dictionary<string, object>()).ContinueWith(t => t.Result.AsMemory());
 
-        event EventHandler<GattValueChangedEventArgs> _ValueChanged;
-
         Task _StartNotifyAsync() => proxy.StartNotifyAsync(); // TODO: might want to wait until "Notifying" property is true
 
         Task _StopNotifyAsync() => proxy.StopNotifyAsync();
-
-        void _add_ValueChanged(EventHandler<GattValueChangedEventArgs> handler) => _ValueChanged += handler;
-        void _remove_ValueChanged(EventHandler<GattValueChangedEventArgs> handler) => _ValueChanged -= handler;
     }
 }

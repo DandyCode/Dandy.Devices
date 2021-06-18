@@ -6,12 +6,12 @@ namespace Dandy.Devices.BluetoothLE
     public enum AdvertisementWatcherError
     {
         /// <summary>
-        /// No error occured.
+        /// No error occurred.
         /// </summary>
         None,
 
         /// <summary>
-        /// An unknown error occured.
+        /// An unknown error occurred.
         /// </summary>
         Unknown,
 
@@ -21,7 +21,7 @@ namespace Dandy.Devices.BluetoothLE
         Unauthorized,
 
         /// <summary>
-        /// Opeation is not supported on the current hardware.
+        /// Operation is not supported on the current hardware.
         /// </summary>
         Unsupported,
 

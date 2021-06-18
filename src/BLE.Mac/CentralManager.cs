@@ -113,7 +113,7 @@ namespace Dandy.Devices.BLE.Mac
             public async Task DisposeAsync()
             {
                 central.StopScan();
-                await isScanningObservable.FirstAsync(x => !x).GetAwaiter();
+                await isScanningObservable.FirstAsync(x => !x);
                 subscription.Dispose();
             }
         }
@@ -138,7 +138,7 @@ namespace Dandy.Devices.BLE.Mac
                 .Select(x => new AdvertisementData(x.peripheral, x.advertisementData, x.rssi)).Subscribe(observer);
 
             central.ScanForPeripherals(cbUuids, options);
-            await isScanningObservable.FirstAsync(x => x).GetAwaiter();
+            await isScanningObservable.FirstAsync(x => x);
 
             // When isScanning transitions to false, observer is complete. This
             // may occur _before_ scanning is stopped via the ScanStopper, e.g.

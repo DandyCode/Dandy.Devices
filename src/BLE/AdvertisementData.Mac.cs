@@ -1,18 +1,17 @@
-#nullable enable
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using CoreBluetooth;
 using Foundation;
 
 using static System.Buffers.Binary.BinaryPrimitives;
 using CBAdvertisementData = CoreBluetooth.AdvertisementData;
 
-namespace Dandy.Devices.BLE.Mac
+namespace Dandy.Devices.BLE
 {
-    public class AdvertisementData
+    partial class AdvertisementData
     {
         private readonly CBPeripheral peripheral;
         private readonly CBAdvertisementData advertisementData;
@@ -25,57 +24,26 @@ namespace Dandy.Devices.BLE.Mac
             this.rssi = rssi;
         }
 
-        public string Id => peripheral.Identifier.AsString();
+        private partial string GetId() => peripheral.Identifier.AsString();
 
-        public string? LocalName => advertisementData.LocalName;
+        private partial string? GetLocalName() => advertisementData.LocalName;
 
-        public IImmutableDictionary<ushort, ImmutableArray<byte>>? ManufacturerData =>
+        private partial IImmutableDictionary<ushort, ImmutableArray<byte>>? GetManufacturerData() =>
             ParseManufacturerData(advertisementData.ManufacturerData);
 
-        public IImmutableDictionary<Guid, ImmutableArray<byte>>? ServiceData =>
+        private partial IImmutableDictionary<Guid, ImmutableArray<byte>>? GetServiceData() =>
             // https://github.com/xamarin/xamarin-macios/issues/11917
             // The strong dictionary is returning null even when there is
             // service data, so we have added a workaround to get the service
             // data from the underlying dictionary.
             ParseServiceData(advertisementData.ServiceData ?? WorkaroundNullServiceData(advertisementData));
 
-        public IImmutableSet<Guid>? ServiceUuids =>
+        private partial IImmutableSet<Guid>? GetServiceUuids() =>
             ParseServiceUuids(advertisementData.ServiceUuids, advertisementData.OverflowServiceUuids);
 
-        public short? TxPower => advertisementData.TxPowerLevel?.Int16Value;
+        private partial short? GetTxPower() => advertisementData.TxPowerLevel?.Int16Value;
 
-        public short Rssi => rssi.Int16Value;
-
-        public override string ToString()
-        {
-            var items = new List<string>();
-
-            items.Add($"ID: {Id}");
-
-            if (LocalName is not null) {
-                items.Add($"LocalName: {LocalName}");
-            }
-
-            if (ManufacturerData is not null) {
-                items.Add($"ManufacturerData: {string.Join(", ", ManufacturerData.Select(x => $"{x.Key}: {BitConverter.ToString(x.Value.ToArray())}"))}");
-            }
-
-            if (ServiceData is not null) {
-                items.Add($"ServiceData: {string.Join(", ", ServiceData.Select(x => $"{x.Key}: {BitConverter.ToString(x.Value.ToArray())}"))}");
-            }
-
-            if (ServiceUuids is not null) {
-                items.Add($"ServiceUuids: {string.Join(", ", ServiceUuids)}");
-            }
-
-            if (TxPower is not null) {
-                items.Add($"TxPower: {TxPower}");
-            }
-
-            items.Add($"RSSI: {Rssi}");
-
-            return string.Join("; ", items);
-        }
+        private partial short GetRssi() => rssi.Int16Value;
 
         private static unsafe IImmutableDictionary<ushort, ImmutableArray<byte>>?
             ParseManufacturerData(NSData? manufacturerData)
@@ -101,7 +69,7 @@ namespace Dandy.Devices.BLE.Mac
             var builder = ImmutableDictionary.CreateBuilder<Guid, ImmutableArray<byte>>();
 
             foreach (var item in serviceData) {
-                var guid = Marshal.CBUuidToGuid((CBUUID)item.Key);
+                var guid = Platform.CBUuidToGuid((CBUUID)item.Key);
                 var nsdata = (NSData)item.Value;
                 var span = new ReadOnlySpan<byte>((void*)nsdata.Bytes, (int)nsdata.Length);
                 var data = ImmutableArrayFromSpan(span);

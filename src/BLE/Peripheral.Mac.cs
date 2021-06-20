@@ -1,4 +1,5 @@
-#nullable enable
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
 
 using System;
 using System.Collections.Generic;
@@ -9,16 +10,19 @@ using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
 
-namespace Dandy.Devices.BLE.Mac
+namespace Dandy.Devices.BLE
 {
-    public class Peripheral : IAsyncDisposable
+    partial class Peripheral : IAsyncDisposable
     {
-        readonly CBCentralManager central;
-        readonly CentralManagerDelegate centralDelegate;
+        private readonly CBCentralManager central;
+        private readonly CentralManagerDelegate centralDelegate;
         private readonly PeripheralDelegate @delegate;
         private readonly CBPeripheral peripheral;
 
-        internal Peripheral(CBCentralManager central, CentralManagerDelegate centralDelegate, CBPeripheral peripheral)
+        internal Peripheral(
+            CBCentralManager central,
+            CentralManagerDelegate centralDelegate,
+            CBPeripheral peripheral)
         {
             this.central = central;
             this.centralDelegate = centralDelegate;
@@ -27,26 +31,26 @@ namespace Dandy.Devices.BLE.Mac
             peripheral.Delegate = @delegate;
         }
 
-        public string? Name => peripheral.Name;
+        private partial string GetId() => peripheral.Identifier.AsString();
 
-        public string Id => peripheral.Identifier.AsString();
+        private partial string? GetName() => peripheral.Name;
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
+            if (peripheral.State == CBPeripheralState.Disconnected) {
+                return;
+            }
+
             var errorAwaiter = centralDelegate.DisconnectedPeripheralObservable
                 .FirstAsync(x => x.peripheral.Identifier == peripheral.Identifier)
                 .GetAwaiter();
-
-            if (!peripheral.IsConnected) {
-                return;
-            }
 
             central.CancelPeripheralConnection(peripheral);
 
             var (_, error) = await errorAwaiter;
         }
 
-        public async Task<IEnumerable<GattService>> GetServicesAsync(IEnumerable<Guid>? uuids = null)
+        public async partial Task<IEnumerable<GattService>> GetServicesAsync(IEnumerable<Guid>? uuids)
         {
             var cbUuids = uuids?.Select(x => CBUUID.FromString(x.ToString())).ToArray();
             var errorAwaiter = @delegate.DiscoveredServiceObservable.FirstAsync().GetAwaiter();
@@ -57,12 +61,8 @@ namespace Dandy.Devices.BLE.Mac
                 throw new NSErrorException(error);
             }
 
-            return peripheral.Services.Select(x => new GattService(peripheral, @delegate, this, x));
-        }
-
-        public Task<IEnumerable<GattService>> GetServicesAsync(params Guid[] uuids)
-        {
-            return GetServicesAsync((IEnumerable<Guid>?)uuids);
+            return peripheral.Services?.Select(x => new GattService(peripheral, @delegate, this, x))
+                ?? Enumerable.Empty<GattService>();
         }
     }
 

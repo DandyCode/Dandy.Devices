@@ -4,10 +4,18 @@
     <ProjectReference Include="..\..\src\BLE\BLE.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0-macos</TargetFramework>
-    <PublishTrimmed>false</PublishTrimmed>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-macos</TargetFramework>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
+  </PropertyGroup>
 </Project>

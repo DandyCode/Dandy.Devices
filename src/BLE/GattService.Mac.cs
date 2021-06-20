@@ -1,4 +1,5 @@
-﻿# nullable enable
+﻿// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
 
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
 
-namespace Dandy.Devices.BLE.Mac
+namespace Dandy.Devices.BLE
 {
-    public class GattService
+    partial class GattService
     {
         private readonly CBPeripheral peripheral;
         private readonly PeripheralDelegate @delegate;
@@ -24,11 +25,9 @@ namespace Dandy.Devices.BLE.Mac
             this.service = service;
         }
 
-        public Peripheral Peripheral { get; }
+        private partial Guid GetUuid() => Platform.CBUuidToGuid(service.UUID);
 
-        public Guid Uuid => Marshal.CBUuidToGuid(service.UUID);
-
-        public async Task<IEnumerable<GattCharacteristic>> GetCharacteristicsAsync(IEnumerable<Guid>? uuids)
+        public async partial Task<IEnumerable<GattCharacteristic>> GetCharacteristicsAsync(IEnumerable<Guid>? uuids)
         {
             var cbUuids = uuids?.Select(x => CBUUID.FromString(x.ToString())).ToArray();
             var errorAwaiter = @delegate.DiscoveredCharacteristicObservable.FirstAsync(x => x.service == service).GetAwaiter();
@@ -39,12 +38,8 @@ namespace Dandy.Devices.BLE.Mac
                 throw new NSErrorException(error);
             }
 
-            return service.Characteristics.Select(x => new GattCharacteristic(peripheral, @delegate, this, x));
-        }
-
-        public Task<IEnumerable<GattCharacteristic>> GetCharacteristicsAsync(params Guid[] uuids)
-        {
-            return GetCharacteristicsAsync((IEnumerable<Guid>)uuids);
+            return service.Characteristics?.Select(x => new GattCharacteristic(peripheral, @delegate, this, x))
+                ?? Enumerable.Empty<GattCharacteristic>();
         }
     }
 }

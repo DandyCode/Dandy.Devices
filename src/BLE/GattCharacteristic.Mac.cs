@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
 
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
 
-namespace Dandy.Devices.BLE.Mac
+namespace Dandy.Devices.BLE
 {
-    public class GattCharacteristic
+    partial class GattCharacteristic
     {
         private readonly CBPeripheral peripheral;
         private readonly PeripheralDelegate @delegate;
@@ -28,14 +29,12 @@ namespace Dandy.Devices.BLE.Mac
             this.characteristic = characteristic;
         }
 
-        public GattService Service { get; }
+        private partial Guid GetUuid() => Platform.CBUuidToGuid(characteristic.UUID);
 
-        public Guid Uuid => Marshal.CBUuidToGuid(characteristic.UUID);
-
-        public GattCharacteristicProperties Properties =>
+        private partial GattCharacteristicProperties GetProperties() =>
             (GattCharacteristicProperties)characteristic.Properties;
 
-        public async Task<IEnumerable<GattDescriptor>> GetDescriptorsAsync()
+        public async partial Task<IEnumerable<GattDescriptor>> GetDescriptorsAsync()
         {
             var errorAwaiter = @delegate.DiscoveredDescriptorObservable
                 .FirstAsync(x => x.characteristic == characteristic).GetAwaiter();
@@ -47,11 +46,12 @@ namespace Dandy.Devices.BLE.Mac
                 throw new NSErrorException(error);
             }
 
-            return characteristic.Descriptors.Select(
-                descriptor => new GattDescriptor(peripheral, @delegate, this, descriptor));
+            return characteristic.Descriptors?.Select(
+                descriptor => new GattDescriptor(peripheral, @delegate, this, descriptor)
+            ) ?? Enumerable.Empty<GattDescriptor>();
         }
 
-        public async Task<ReadOnlyMemory<byte>> ReadAsync()
+        public async partial Task<ReadOnlyMemory<byte>> ReadAsync()
         {
             var errorAwaiter = @delegate.UpdatedCharacteristicValueObservable
                 .FirstAsync(x => x.characteristic == characteristic).GetAwaiter();
@@ -66,9 +66,9 @@ namespace Dandy.Devices.BLE.Mac
             return value.ToArray();
         }
 
-        public async Task WriteAsync(ReadOnlyMemory<byte> value, bool withResponse = true)
+        public async partial Task WriteAsync(ReadOnlyMemory<byte> value, bool withResponse)
         {
-            var data = Marshal.MemoryToNSData(value);
+            var data = Platform.MemoryToNSData(value);
 
             if (withResponse) {
                 var errorAwaiter = @delegate.WroteCharacteristicObservable
@@ -85,64 +85,5 @@ namespace Dandy.Devices.BLE.Mac
                 peripheral.WriteValue(data, characteristic, CBCharacteristicWriteType.WithoutResponse);
             }
         }
-    }
-
-    [Flags]
-    public enum GattCharacteristicProperties : ushort
-    {
-        /// <summary>
-        /// The characteristic doesn’t have any properties that apply.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        /// The characteristic supports broadcasting
-        /// </summary>
-        Broadcast = 1 << 0,
-
-        /// <summary>
-        /// The characteristic is readable
-        /// </summary>
-        Read = 1 << 1,
-
-        /// <summary>
-        /// The characteristic supports Write Without Response
-        /// </summary>
-        WriteWithoutResponse = 1 << 2,
-
-        /// <summary>
-        /// The characteristic is writable
-        /// </summary>
-        Write = 1 << 3,
-
-        /// <summary>
-        /// The characteristic is notifiable
-        /// </summary>
-        Notify = 1 << 4,
-
-        /// <summary>
-        /// The characteristic is indicatable
-        /// </summary>
-        Indicate = 1 << 5,
-
-        /// <summary>
-        /// The characteristic supports signed writes
-        /// </summary>
-        AuthenticatedSignedWrites = 1 << 6,
-
-        /// <summary>
-        /// The ExtendedProperties Descriptor is present
-        /// </summary>
-        ExtendedProperties = 1 << 7,
-
-        /// <summary>
-        /// The characteristic supports reliable writes
-        /// </summary>
-        ReliableWrites = 1 << 8,
-
-        /// <summary>
-        /// The characteristic has writable auxiliaries
-        /// </summary>
-        WritableAuxiliaries = 1 << 9,
     }
 }

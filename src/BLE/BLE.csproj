@@ -1,7 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6.0-macos</TargetFramework>
+    <_Platform Condition="$(TargetFramework.Contains('net6.0-mac')) Or $(TargetFramework.Contains('net6.0-ios'))">Mac</_Platform>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TargetFrameworks>net6.0-ios;net6.0-maccatalyst;net6.0-macos</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks Condition="'$(_Platform)' == 'Mac'">true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefaultItemExcludes Condition="'$(_Platform)' != 'Mac'">$(DefaultItemExcludes);*.Mac.cs</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+  </ItemGroup>
 </Project>

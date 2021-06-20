@@ -1,5 +1,9 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
+
 using System;
-namespace Dandy.Devices.BLE.Mac
+
+namespace Dandy.Devices.BLE
 {
     public static class Uuid
     {
@@ -9,7 +13,7 @@ namespace Dandy.Devices.BLE.Mac
         {
             var bytes = baseUuid.ToByteArray();
             // big endian
-            bytes[0] = (byte)(uuid);
+            bytes[0] = (byte)uuid;
             bytes[1] = (byte)(uuid >> 8);
             return new(bytes);
         }
@@ -23,7 +27,7 @@ namespace Dandy.Devices.BLE.Mac
         {
             var bytes = baseUuid.ToByteArray();
             // big endian
-            bytes[0] = (byte)(uuid);
+            bytes[0] = (byte)uuid;
             bytes[1] = (byte)(uuid >> 8);
             bytes[2] = (byte)(uuid >> 16);
             bytes[3] = (byte)(uuid >> 24);

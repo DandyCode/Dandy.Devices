@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿// SPDX-License-Identifier: MIT
+// Copyright (c) 2021 David Lechner <david@lechnology.com>
 
 using System;
 using System.Reactive.Linq;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
 
-namespace Dandy.Devices.BLE.Mac
+namespace Dandy.Devices.BLE
 {
-    public class GattDescriptor
+    partial class GattDescriptor
     {
         private readonly CBPeripheral peripheral;
         private readonly PeripheralDelegate @delegate;
@@ -17,20 +18,18 @@ namespace Dandy.Devices.BLE.Mac
         internal GattDescriptor(
             CBPeripheral peripheral,
             PeripheralDelegate @delegate,
-            GattCharacteristic chararacteristic,
+            GattCharacteristic characteristic,
             CBDescriptor descriptor)
         {
             this.peripheral = peripheral;
             this.@delegate = @delegate;
-            Chararacteristic = chararacteristic;
+            Characteristic = characteristic;
             this.descriptor = descriptor;
         }
 
-        public GattCharacteristic Chararacteristic { get; }
+        private partial Guid GetUuid() => Platform.CBUuidToGuid(descriptor.UUID);
 
-        public Guid Uuid => Marshal.CBUuidToGuid(descriptor.UUID);
-
-        public async Task<ReadOnlyMemory<byte>> ReadAsync()
+        public async partial Task<ReadOnlyMemory<byte>> ReadAsync()
         {
             var errorAwaiter = @delegate.UpdatedDescriptorValueObservable
                 .FirstAsync(x => x.descriptor == descriptor).GetAwaiter();
@@ -44,12 +43,12 @@ namespace Dandy.Devices.BLE.Mac
             return ValueToMemory(value);
         }
 
-        public async Task WriteAsync(ReadOnlyMemory<byte> value)
+        public async partial Task WriteAsync(ReadOnlyMemory<byte> value)
         {
             var errorAwaiter = @delegate.WroteDescriptorObservable
                 .FirstAsync(x => x.descriptor == descriptor).GetAwaiter();
 
-            peripheral.WriteValue(Marshal.MemoryToNSData(value), descriptor);
+            peripheral.WriteValue(Platform.MemoryToNSData(value), descriptor);
 
             var (_, error) = await errorAwaiter;
 

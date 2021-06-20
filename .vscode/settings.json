@@ -1,0 +1,27 @@
+{
+    "[csharp]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    },
+    "psi-header.config": {
+        "forceToTop": true,
+        "blankLinesAfter": 1
+    },
+    "psi-header.lang-config": [
+        {
+            "language": "csharp",
+            "begin": "",
+            "end": "",
+            "prefix": "// "
+        }
+    ],
+    "psi-header.templates": [
+        {
+            "language": "*",
+            "template": [
+                "SPDX-License-Identifier: MIT",
+                "Copyright (c) <<yeartoyear(fc,now)>> <<author>> <<<authoremail>>>"
+            ]
+        }
+    ]
+}

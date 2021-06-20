@@ -9,7 +9,7 @@ namespace Dandy.Devices.BluetoothLE
     public sealed partial class AdvertisementWatcher
     {
         /// <summary>
-        /// Triggered when a new advertisment is received.
+        /// Triggered when a new advertisement is received.
         /// </summary>
         public event EventHandler<AdvertisementReceivedEventArgs> Received;
 

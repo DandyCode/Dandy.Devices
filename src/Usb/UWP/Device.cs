@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Usb;
 
-namespace Dandy.Devices.Usb.Uwp
+namespace Dandy.Devices.Usb
 {
-    public sealed class Device : IDevice
+    partial class Device
     {
         private readonly DeviceInformation info;
         private readonly UsbDevice device;
@@ -32,7 +32,7 @@ namespace Dandy.Devices.Usb.Uwp
             }
         }
 
-        public void Dispose()
+        void _Dispose()
         {
             Dispose(true);
         }

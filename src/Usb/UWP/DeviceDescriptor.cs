@@ -1,7 +1,7 @@
 using System;
 using Windows.Devices.Usb;
 
-namespace Dandy.Devices.Usb.Uwp
+namespace Dandy.Devices.Usb
 {
     public sealed class DeviceDescriptor : IDeviceDescriptor
     {

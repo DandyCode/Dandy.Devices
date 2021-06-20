@@ -135,10 +135,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Serial.Uwp\Serial.Uwp.csproj">
-      <Project>{07588271-1657-48d6-b1b3-48d57b84712f}</Project>
-      <Name>Serial.Uwp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Serial\Serial.csproj">
       <Project>{789335e3-78bb-441e-ad3a-b559e967ce71}</Project>
       <Name>Serial</Name>

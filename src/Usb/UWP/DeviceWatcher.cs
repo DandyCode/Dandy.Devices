@@ -10,7 +10,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.Usb;
 using Windows.Storage;
 
-namespace Dandy.Devices.Usb.Uwp
+namespace Dandy.Devices.Usb
 {
     public sealed class DeviceWatcher : ObservableBase<IDevice>, IDeviceWatcher
     {

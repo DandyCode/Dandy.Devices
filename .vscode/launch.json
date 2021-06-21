@@ -4,6 +4,17 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
+    {
+        "name": "WatchBLEAdvertisments (Win)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceRoot}/example/WatchBLEAdvertisements/bin/Debug/net6.0-windows10.0.18362.0/WatchBLEAdvertisements.exe",
+        "args": [],
+        "cwd": "${workspaceRoot}",
+        "stopAtEntry": false,
+        "console": "externalTerminal"
+    },
        {
            "name": "WatchBluetooth",
            "type": "coreclr",

@@ -12,6 +12,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0-windows10.0.18362.0</TargetFramework>
+  </PropertyGroup>
+
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-macos</TargetFramework>

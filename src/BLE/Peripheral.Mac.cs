@@ -12,7 +12,7 @@ using Foundation;
 
 namespace Dandy.Devices.BLE
 {
-    partial class Peripheral : IAsyncDisposable
+    partial class Peripheral
     {
         private readonly CBCentralManager central;
         private readonly CentralManagerDelegate centralDelegate;

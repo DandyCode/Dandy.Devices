@@ -93,9 +93,16 @@ namespace WatchBLEAdvertisements.Mac
 
             var advertisementObserver = Observer.Create<AdvertisementData>(
                 data => {
-                    ids.Add(data.Id);
-                    Console.WriteLine(data);
+                    try {
+                        ids.Add(data.Id);
+                        Console.WriteLine(data);
+                    }
+                    catch (Exception ex) {
+                        Console.WriteLine(ex);
+                        throw;
+                    }
                 },
+                e => Console.WriteLine($"observer error: {e}"),
                 () => Console.WriteLine("observer complete"));
 
             Console.WriteLine("scanning...");
@@ -108,11 +115,6 @@ namespace WatchBLEAdvertisements.Mac
             try {
                 await using var peripheral = await central.ConnectAsync(ids.First(), timeoutToken);
                 Console.WriteLine("connected");
-
-                foreach (var p in central.GetConnectedPeripherals()) {
-                    Console.Write("Connected: ");
-                    Console.WriteLine(p.Id);
-                }
 
                 Console.WriteLine("Services:");
                 foreach (var service in await peripheral.GetServicesAsync()) {

@@ -18,19 +18,19 @@ namespace Dandy.Devices.BLE
 
         private partial string? GetLocalName();
 
-        public IImmutableDictionary<ushort, ImmutableArray<byte>>? ManufacturerData =>
+        public IImmutableDictionary<ushort, ReadOnlyMemory<byte>> ManufacturerData =>
             GetManufacturerData();
 
-        private partial IImmutableDictionary<ushort, ImmutableArray<byte>>? GetManufacturerData();
+        private partial IImmutableDictionary<ushort, ReadOnlyMemory<byte>> GetManufacturerData();
 
-        public IImmutableDictionary<Guid, ImmutableArray<byte>>? ServiceData =>
+        public IImmutableDictionary<Guid, ReadOnlyMemory<byte>> ServiceData =>
             GetServiceData();
 
-        private partial IImmutableDictionary<Guid, ImmutableArray<byte>>? GetServiceData();
+        private partial IImmutableDictionary<Guid, ReadOnlyMemory<byte>> GetServiceData();
 
-        public IImmutableSet<Guid>? ServiceUuids => GetServiceUuids();
+        public IImmutableSet<Guid> ServiceUuids => GetServiceUuids();
 
-        private partial IImmutableSet<Guid>? GetServiceUuids();
+        private partial IImmutableSet<Guid> GetServiceUuids();
 
         public short? TxPower => GetTxPower();
 
@@ -50,15 +50,15 @@ namespace Dandy.Devices.BLE
                 items.Add($"LocalName: {LocalName}");
             }
 
-            if (ManufacturerData is not null) {
+            if (ManufacturerData.Any()) {
                 items.Add($"ManufacturerData: {string.Join(", ", ManufacturerData.Select(x => $"{x.Key}: {BitConverter.ToString(x.Value.ToArray())}"))}");
             }
 
-            if (ServiceData is not null) {
+            if (ServiceData.Any()) {
                 items.Add($"ServiceData: {string.Join(", ", ServiceData.Select(x => $"{x.Key}: {BitConverter.ToString(x.Value.ToArray())}"))}");
             }
 
-            if (ServiceUuids is not null) {
+            if (ServiceUuids.Any()) {
                 items.Add($"ServiceUuids: {string.Join(", ", ServiceUuids)}");
             }
 

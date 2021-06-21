@@ -12,6 +12,11 @@ namespace Dandy.Devices.BLE
     {
         public static partial Task<CentralManager> NewAsync();
 
+        public partial Task<IAsyncDisposable> ScanAsync(
+            IObserver<AdvertisementData> observer,
+            IEnumerable<Guid>? uuids = null,
+            bool filterDuplicates = true);
+
         /// <summary>
         /// Tries to connect to a BLE device.
         /// </summary>
@@ -25,10 +30,5 @@ namespace Dandy.Devices.BLE
         /// method will never time out.
         /// </remarks>
         public partial Task<Peripheral> ConnectAsync(string id, CancellationToken token = default);
-
-        public partial Task<IAsyncDisposable> ScanAsync(
-            IObserver<AdvertisementData> observer,
-            IEnumerable<Guid>? uuids = null,
-            bool filterDuplicates = true);
     }
 }

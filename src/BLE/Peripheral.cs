@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dandy.Devices.BLE
 {
-    public sealed partial class Peripheral
+    public sealed partial class Peripheral : IAsyncDisposable
     {
         public string Id => GetId();
 

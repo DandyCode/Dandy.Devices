@@ -28,52 +28,50 @@ namespace Dandy.Devices.BLE
 
         private partial string? GetLocalName() => advertisementData.LocalName;
 
-        private partial IImmutableDictionary<ushort, ImmutableArray<byte>>? GetManufacturerData() =>
+        private partial IImmutableDictionary<ushort, ReadOnlyMemory<byte>> GetManufacturerData() =>
             ParseManufacturerData(advertisementData.ManufacturerData);
 
-        private partial IImmutableDictionary<Guid, ImmutableArray<byte>>? GetServiceData() =>
+        private partial IImmutableDictionary<Guid, ReadOnlyMemory<byte>> GetServiceData() =>
             // https://github.com/xamarin/xamarin-macios/issues/11917
             // The strong dictionary is returning null even when there is
             // service data, so we have added a workaround to get the service
             // data from the underlying dictionary.
             ParseServiceData(advertisementData.ServiceData ?? WorkaroundNullServiceData(advertisementData));
 
-        private partial IImmutableSet<Guid>? GetServiceUuids() =>
+        private partial IImmutableSet<Guid> GetServiceUuids() =>
             ParseServiceUuids(advertisementData.ServiceUuids, advertisementData.OverflowServiceUuids);
 
         private partial short? GetTxPower() => advertisementData.TxPowerLevel?.Int16Value;
 
         private partial short GetRssi() => rssi.Int16Value;
 
-        private static unsafe IImmutableDictionary<ushort, ImmutableArray<byte>>?
+        private static IImmutableDictionary<ushort, ReadOnlyMemory<byte>>
             ParseManufacturerData(NSData? manufacturerData)
         {
-            if (manufacturerData is null) {
-                return null;
+            var mfgData = ImmutableDictionary.Create<ushort, ReadOnlyMemory<byte>>();
+
+            if (manufacturerData is not null) {
+                var rawData = new ReadOnlyMemory<byte>(manufacturerData.ToArray());
+                var cid = ReadUInt16LittleEndian(rawData.Span);
+                var data = rawData[2..];
+                mfgData = mfgData.Add(cid, data);
             }
 
-            var span = new ReadOnlySpan<byte>((void*)manufacturerData.Bytes, (int)manufacturerData.Length);
-            var cid = ReadUInt16LittleEndian(span);
-            var data = ImmutableArrayFromSpan(span.Slice(2));
-
-            return ImmutableDictionary.Create<ushort, ImmutableArray<byte>>().Add(cid, data);
+            return mfgData;
         }
 
-        private static unsafe IImmutableDictionary<Guid, ImmutableArray<byte>>?
+        private static IImmutableDictionary<Guid, ReadOnlyMemory<byte>>
             ParseServiceData(NSDictionary? serviceData)
         {
-            if (serviceData is null) {
-                return null;
-            }
+            var builder = ImmutableDictionary.CreateBuilder<Guid, ReadOnlyMemory<byte>>();
 
-            var builder = ImmutableDictionary.CreateBuilder<Guid, ImmutableArray<byte>>();
-
-            foreach (var item in serviceData) {
-                var guid = Platform.CBUuidToGuid((CBUUID)item.Key);
-                var nsdata = (NSData)item.Value;
-                var span = new ReadOnlySpan<byte>((void*)nsdata.Bytes, (int)nsdata.Length);
-                var data = ImmutableArrayFromSpan(span);
-                builder.Add(guid, data);
+            if (serviceData is not null) {
+                foreach (var item in serviceData) {
+                    var guid = Platform.CBUuidToGuid((CBUUID)item.Key);
+                    var nsdata = (NSData)item.Value;
+                    var data = new ReadOnlyMemory<byte>(nsdata.ToArray());
+                    builder.Add(guid, data);
+                }
             }
 
             return builder.ToImmutable();
@@ -88,12 +86,8 @@ namespace Dandy.Devices.BLE
             return null;
         }
 
-        private static IImmutableSet<Guid>? ParseServiceUuids(CBUUID[]? serviceUuids, CBUUID[]? overflowServiceUuids)
+        private static IImmutableSet<Guid> ParseServiceUuids(CBUUID[]? serviceUuids, CBUUID[]? overflowServiceUuids)
         {
-            if (serviceUuids is null && overflowServiceUuids is null) {
-                return null;
-            }
-
             var builder = ImmutableHashSet.CreateBuilder<Guid>();
 
             if (serviceUuids is not null) {
@@ -109,16 +103,6 @@ namespace Dandy.Devices.BLE
             }
 
             return builder.ToImmutable();
-        }
-
-        private static ImmutableArray<T> ImmutableArrayFromSpan<T>(ReadOnlySpan<T> span)
-        {
-            // Maybe a Span API some day: https://github.com/dotnet/runtime/issues/22928
-            var builder = ImmutableArray.CreateBuilder<T>(span.Length);
-            foreach (var i in span) {
-                builder.Add(i);
-            }
-            return builder.MoveToImmutable();
         }
     }
 }

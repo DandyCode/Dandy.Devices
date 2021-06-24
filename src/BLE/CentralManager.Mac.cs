@@ -133,7 +133,7 @@ namespace Dandy.Devices.BLE
 
             // filtering duplicates is the default, so we only need the options when false
             var options = filterDuplicates ? null : new NSDictionary(
-                CBCentralManager.ScanOptionAllowDuplicatesKey, filterDuplicates
+                CBCentralManager.ScanOptionAllowDuplicatesKey, NSNumber.FromBoolean(true)
             );
 
             var delegateSubscription = @delegate.DiscoveredPeripheralsObservable

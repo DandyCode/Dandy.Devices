@@ -15,6 +15,16 @@
                 "reveal": "silent"
             },
             "problemMatcher": "$msCompile",
+            "windows": {
+                "args": [
+                    "build", "Dandy.Devices.Win.sln"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "build", "Dandy.Devices.Mac.sln"
+                ]
+            },
             "linux": {
                 "args": [
                     "build", "Devices.Linux.sln"

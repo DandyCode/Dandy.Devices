@@ -18,34 +18,34 @@ namespace WatchBLEAdvertisements.Mac
         static readonly Guid lwp3UuidBase = new("00000000-1212-EFDE-1623-785FEABCD123");
         static readonly Guid pybricksUuidBase = new("C5F50000-8280-46DA-89F4-6D8051E4AEEF");
 
-        static Guid wedoUuid(ushort uuid) => Uuid.From16(uuid, wedoUuidBase);
-        static Guid lpw3Uuid(ushort uuid) => Uuid.From16(uuid, lwp3UuidBase);
-        static Guid pybricksUuid(ushort uuid) => Uuid.From16(uuid, pybricksUuidBase);
+        static Guid WedoUuid(ushort uuid) => Uuid.From16(uuid, wedoUuidBase);
+        static Guid Lwp3Uuid(ushort uuid) => Uuid.From16(uuid, lwp3UuidBase);
+        static Guid PybricksUuid(ushort uuid) => Uuid.From16(uuid, pybricksUuidBase);
 
         static readonly Guid wedoAdvertisementDataServiceUuid = Uuid.From16(0x1523);
-        static readonly Guid wedoHubServiceUuid = wedoUuid(0x1523);
-        static readonly Guid wedoHubNameCharacteristicUuid = wedoUuid(0x1524);
-        static readonly Guid wedoHubButtonCharacteristicUuid = wedoUuid(0x1526);
-        static readonly Guid wedoHubAttachedIOCharacteristicUuid = wedoUuid(0x1527);
-        static readonly Guid wedoHubLowVolatgeAlertCharacteristicUuid = wedoUuid(0x1528);
-        static readonly Guid wedoHubHighCurrentAlertCharacteristicUuid = wedoUuid(0x1529);
-        static readonly Guid wedoHubLowSignalAlertCharacteristicUuid = wedoUuid(0x152A);
-        static readonly Guid wedoHubPowerOffCharacteristicUuid = wedoUuid(0x152B);
-        static readonly Guid wedoHubPortVccCharacteristicUuid = wedoUuid(0x152C);
-        static readonly Guid wedoHubBatteryTypeCharacteristicUuid = wedoUuid(0x152D);
-        static readonly Guid wedoHubDisconnectCharacteristicUuid = wedoUuid(0x152E);
+        static readonly Guid wedoHubServiceUuid = WedoUuid(0x1523);
+        static readonly Guid wedoHubNameCharacteristicUuid = WedoUuid(0x1524);
+        static readonly Guid wedoHubButtonCharacteristicUuid = WedoUuid(0x1526);
+        static readonly Guid wedoHubAttachedIOCharacteristicUuid = WedoUuid(0x1527);
+        static readonly Guid wedoHubLowVolatgeAlertCharacteristicUuid = WedoUuid(0x1528);
+        static readonly Guid wedoHubHighCurrentAlertCharacteristicUuid = WedoUuid(0x1529);
+        static readonly Guid wedoHubLowSignalAlertCharacteristicUuid = WedoUuid(0x152A);
+        static readonly Guid wedoHubPowerOffCharacteristicUuid = WedoUuid(0x152B);
+        static readonly Guid wedoHubPortVccCharacteristicUuid = WedoUuid(0x152C);
+        static readonly Guid wedoHubBatteryTypeCharacteristicUuid = WedoUuid(0x152D);
+        static readonly Guid wedoHubDisconnectCharacteristicUuid = WedoUuid(0x152E);
 
-        static readonly Guid wedoInputServiceUuid = wedoUuid(0x4F0E);
-        static readonly Guid wedoInputValueCharacteristicUuid = wedoUuid(0x1560);
-        static readonly Guid wedoInputFormatCharacteristicUuid = wedoUuid(0x1561);
-        static readonly Guid wedoInputCommandCharacteristicUuid = wedoUuid(0x1563);
-        static readonly Guid wedoOutputCommandCharacteristicUuid = wedoUuid(0x1565);
+        static readonly Guid wedoInputServiceUuid = WedoUuid(0x4F0E);
+        static readonly Guid wedoInputValueCharacteristicUuid = WedoUuid(0x1560);
+        static readonly Guid wedoInputFormatCharacteristicUuid = WedoUuid(0x1561);
+        static readonly Guid wedoInputCommandCharacteristicUuid = WedoUuid(0x1563);
+        static readonly Guid wedoOutputCommandCharacteristicUuid = WedoUuid(0x1565);
 
-        static readonly Guid lwp3HubServiceUuid = lpw3Uuid(0x1623);
-        static readonly Guid lwp3HubCharacteristicUuid = lpw3Uuid(0x1624);
+        static readonly Guid lwp3HubServiceUuid = Lwp3Uuid(0x1623);
+        static readonly Guid lwp3HubCharacteristicUuid = Lwp3Uuid(0x1624);
 
-        static readonly Guid pybricksServiceUuid = pybricksUuid(0x0001);
-        static readonly Guid pybricksCharacteristicUuid = pybricksUuid(0x0002);
+        static readonly Guid pybricksServiceUuid = PybricksUuid(0x0001);
+        static readonly Guid pybricksCharacteristicUuid = PybricksUuid(0x0002);
 
         static readonly IImmutableDictionary<Guid, string> knownServices = WellKnown.Services
             .Remove(wedoHubServiceUuid) // conflicts with com.nordicsemi.service.led_and_button

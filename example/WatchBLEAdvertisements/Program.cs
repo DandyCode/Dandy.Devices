@@ -43,6 +43,8 @@ namespace WatchBLEAdvertisements.Mac
 
         static readonly Guid lwp3HubServiceUuid = Lwp3Uuid(0x1623);
         static readonly Guid lwp3HubCharacteristicUuid = Lwp3Uuid(0x1624);
+        static readonly Guid lwp3BootloaderServiceUuid = Lwp3Uuid(0x1625);
+        static readonly Guid lwp3BootloaderCharacteristicUuid = Lwp3Uuid(0x1626);
 
         static readonly Guid pybricksServiceUuid = PybricksUuid(0x0001);
         static readonly Guid pybricksCharacteristicUuid = PybricksUuid(0x0002);
@@ -55,6 +57,7 @@ namespace WatchBLEAdvertisements.Mac
                     { wedoHubServiceUuid, "WeDo 2.0 Hub Service" },
                     { wedoInputServiceUuid, "WeDo 2.0 Input Service" },
                     { lwp3HubServiceUuid, "LWP3 Hub Service" },
+                    { lwp3BootloaderServiceUuid, "LWP3 Bootloader Service" },
                     { pybricksServiceUuid, "Pybricks Service" },
                 }
             );
@@ -78,6 +81,7 @@ namespace WatchBLEAdvertisements.Mac
                     { wedoInputCommandCharacteristicUuid, "WeDo 2.0 Input Command Characteristic" },
                     { wedoOutputCommandCharacteristicUuid, "WeDo 2.0 Output Command Characteristic" },
                     { lwp3HubCharacteristicUuid, "LWP3 Hub Characteristic" },
+                    { lwp3BootloaderCharacteristicUuid, "LWP3 Bootloader Characteristic" },
                     { pybricksCharacteristicUuid, "Pybricks Characteristic" },
                 }
             );

@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using CoreBluetooth;
-using Foundation;
 using ObjCRuntime;
 
 namespace Dandy.Devices.BLE
@@ -19,12 +18,6 @@ namespace Dandy.Devices.BLE
             // HACK: can't use NSApplication.Init() because it messes with the synchronization context
             typeof(Runtime).GetMethod("EnsureInitialized", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null);
             typeof(Runtime).GetMethod("RegisterAssemblies", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null);
-        }
-
-        public static unsafe NSData MemoryToNSData(ReadOnlyMemory<byte> memory)
-        {
-            var handle = memory.Pin();
-            return new NSData((IntPtr)handle.Pointer, (nuint)memory.Length, (_, _) => handle.Dispose());
         }
 
         public static Guid CBUuidToGuid(CBUUID uuid)

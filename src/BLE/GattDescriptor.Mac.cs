@@ -48,7 +48,8 @@ namespace Dandy.Devices.BLE
             var errorAwaiter = @delegate.WroteDescriptorObservable
                 .FirstAsync(x => x.descriptor == descriptor).GetAwaiter();
 
-            peripheral.WriteValue(Platform.MemoryToNSData(value), descriptor);
+            using var data = NSData.FromArray(value.ToArray());
+            peripheral.WriteValue(data, descriptor);
 
             var (_, error) = await errorAwaiter;
 

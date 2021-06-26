@@ -68,7 +68,7 @@ namespace Dandy.Devices.BLE
 
         public async partial Task WriteAsync(ReadOnlyMemory<byte> value, bool withResponse)
         {
-            var data = Platform.MemoryToNSData(value);
+            using var data = NSData.FromArray(value.ToArray());
 
             if (withResponse) {
                 var errorAwaiter = @delegate.WroteCharacteristicObservable

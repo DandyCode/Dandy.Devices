@@ -1,6 +1,9 @@
 ﻿// SPDX-License-Identifier: MIT
 // Copyright (c) 2021 David Lechner <david@lechnology.com>
 
+// https://github.com/dotnet/roslyn/issues/54103
+#pragma warning disable CS1591
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

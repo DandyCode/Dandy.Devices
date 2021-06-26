@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 David Lechner <david@lechnology.com>
 
+// https://github.com/dotnet/roslyn/issues/54103
+#pragma warning disable CS1591
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,14 +98,14 @@ namespace Dandy.Devices.BLE
             }
         }
 
-        public IEnumerable<Peripheral> GetConnectedPeripherals(IEnumerable<Guid> uuids)
+        internal IEnumerable<Peripheral> GetConnectedPeripherals(IEnumerable<Guid> uuids)
         {
             var cbUuids = uuids.Select(x => CBUUID.FromString(x.ToString())).ToArray();
             var peripherals = central.RetrieveConnectedPeripherals(cbUuids);
             return peripherals.Select(p => new Peripheral(central, @delegate, p));
         }
 
-        public IEnumerable<Peripheral> GetConnectedPeripherals(params Guid[] uuids)
+        internal IEnumerable<Peripheral> GetConnectedPeripherals(params Guid[] uuids)
         {
             return GetConnectedPeripherals(uuids?.AsEnumerable() ?? Enumerable.Empty<Guid>());
         }
@@ -153,7 +156,7 @@ namespace Dandy.Devices.BLE
             return new ScanStopper(central, isScanningObservable, isScanningSubscription);
         }
 
-        public ValueTask DisposeAsync()
+        public partial ValueTask DisposeAsync()
         {
             isScanningObserver.Dispose();
 

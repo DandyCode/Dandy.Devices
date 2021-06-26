@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2021 David Lechner <david@lechnology.com>
 
+// https://github.com/dotnet/roslyn/issues/54103
+#pragma warning disable CS1591
+
 using System.Reactive.Linq;
 using Windows.Foundation;
 using Windows.Devices.Bluetooth;
@@ -109,7 +112,7 @@ namespace Dandy.Devices.BLE
             return peripheral;
         }
 
-        public ValueTask DisposeAsync()
+        public partial ValueTask DisposeAsync()
         {
             // TODO: what do we need to do here?
             return ValueTask.CompletedTask;

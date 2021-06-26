@@ -8,10 +8,32 @@ using System.Threading.Tasks;
 
 namespace Dandy.Devices.BLE
 {
+    /// <summary>
+    /// Manages scanning and connecting to peripherals as a central.
+    /// </summary>
     public sealed partial class CentralManager : IAsyncDisposable
     {
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <returns>The new instance.</returns>
         public static partial Task<CentralManager> NewAsync();
 
+        /// <summary>
+        /// Starts scanning for peripherals.
+        /// </summary>
+        /// <param name="observer">
+        /// An observer that receives callbacks when advertising data is received.
+        /// </param>
+        /// <param name="uuids">
+        /// An optional list of service UUIDs to filter on.
+        /// </param>
+        /// <param name="filterDuplicates">
+        /// If <c>false</c>, duplicate advertising data will be received.
+        /// </param>
+        /// <returns>
+        /// An object that must be disposed to stop scanning.
+        /// </returns>
         public partial Task<IAsyncDisposable> ScanAsync(
             IObserver<AdvertisementData> observer,
             IEnumerable<Guid>? uuids = null,
@@ -30,5 +52,10 @@ namespace Dandy.Devices.BLE
         /// method will never time out.
         /// </remarks>
         public partial Task<Peripheral> ConnectAsync(string id, CancellationToken token = default);
+
+        /// <summary>
+        /// Releases OS resources.
+        /// </summary>
+        public partial ValueTask DisposeAsync();
     }
 }

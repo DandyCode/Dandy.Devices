@@ -5,6 +5,9 @@ using System;
 
 namespace Dandy.Devices.BLE
 {
+    /// <summary>
+    /// GATT characteristic properties.
+    /// </summary>
     [Flags]
     public enum GattCharacteristicProperties : ushort
     {

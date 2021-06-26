@@ -7,8 +7,14 @@ using System.Collections.Immutable;
 
 namespace Dandy.Devices.BLE
 {
+    /// <summary>
+    /// Utility class containing well-known UUIDs and other assigned values.
+    /// </summary>
     public static class WellKnown
     {
+        /// <summary>
+        /// Dictionary of names for well-known service UUIDs.
+        /// </summary>
         public static IImmutableDictionary<Guid, string> Services { get; } = new Dictionary<Guid, string> {
             { new Guid("00001800-0000-1000-8000-00805F9B34FB"), "Generic Access" },
             { new Guid("00001811-0000-1000-8000-00805F9B34FB"), "Alert Notification Service" },
@@ -77,6 +83,10 @@ namespace Dandy.Devices.BLE
             { new Guid("0000FD6F-0000-1000-8000-00805F9B34FB"), "Exposure Notification Service" },
             { new Guid("8D53DC1D-1DB7-4CD3-868B-8A527460AA84"), "SMP Service" },
         }.ToImmutableDictionary();
+
+        /// <summary>
+        /// Dictionary of names for well-known characteristic UUIDs.
+        /// </summary>
         public static IImmutableDictionary<Guid, string> Characteristics { get; } = new Dictionary<Guid, string> {
             { new Guid("00002A7E-0000-1000-8000-00805F9B34FB"), "Aerobic Heart Rate Lower Limit" },
             { new Guid("00002A84-0000-1000-8000-00805F9B34FB"), "Aerobic Heart Rate Upper Limit" },
@@ -401,6 +411,10 @@ namespace Dandy.Devices.BLE
             { new Guid("00002ADD-0000-1000-8000-00805F9B34FB"), "Mesh Proxy Data In" },
             { new Guid("00002ADE-0000-1000-8000-00805F9B34FB"), "Mesh Proxy Data Out" },
         }.ToImmutableDictionary();
+
+        /// <summary>
+        /// Dictionary of names for well-known descriptor UUIDs.
+        /// </summary>
         public static IImmutableDictionary<Guid, string> Descriptors { get; } = new Dictionary<Guid, string> {
             { new Guid("00002900-0000-1000-8000-00805F9B34FB"), "Characteristic Extended Properties" },
             { new Guid("00002901-0000-1000-8000-00805F9B34FB"), "Characteristic User Name" },
